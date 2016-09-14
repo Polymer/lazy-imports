@@ -31,14 +31,35 @@ var LazyImportsBehavior = {
     var query = `link${groupAttribute}[rel='lazy-import'][href]`
     var imports = domModule.querySelectorAll(query);
     var i, href;
+    var promises = [];
     for (i = 0; i < imports.length; i++) {
-      href = imports[i].getAttribute('href');
-      if (!href || href.length == 0) {
-        continue;
-      }
-      this.importHref(this.resolveUrl(href));
+      promises.push(new Promise((resolve, reject) => {
+        var href = imports[i].getAttribute('href');
+        if (!href || href.length == 0) {
+          return;
+        }
+        var onLoad = function() {
+          console.log("loaded");
+          resolve({loaded: href});
+        }
+        var onFailure = function() {
+          resolve({failed: href});
+        }
+        this.importHref(this.resolveUrl(href), onLoad, onFailure);
+      }));
     }
-
+    return Promise.all(promises).then(function(importRequests){
+      console.log("Everything done!");
+      return importRequests.reduce(function(requests, nextRequest) {
+        if (nextRequest.loaded) {
+          requests.loaded.push(nextRequest.loaded);
+        }
+        if (nextRequest.failed) {
+          requests.loaded.push(nextRequest.failed);
+        }
+        return requests;
+      }, {loaded: [], failed: []})
+    });
   }
 }
 </script>

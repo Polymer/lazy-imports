@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <!--
 @license
 Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
@@ -7,23 +8,18 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
-<dom-module id="lazy-element">
-  <template>
-    <style>
-      :host {
-        border: 2px solid red;
-      }
-    </style>
-    <content></content>
-  </template>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+  <title>paper-button tests</title>
+  <script src="../../web-component-tester/browser.js"></script>
+</head>
+<body>
   <script>
-  Polymer({
-    is: 'lazy-element',
-    properties: {
-      importLoaded: {
-        default: true
-      }
-    }
-  })
+    WCT.loadSuites([
+      'lazy-imports_test.html',
+    ]);
   </script>
-</dom-module>
+</body>
+</html>
