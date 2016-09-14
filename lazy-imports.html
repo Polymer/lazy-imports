@@ -1,0 +1,44 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+`lazy-imports`
+Declarative lazy imports
+
+@demo demo/index.html
+-->
+<script>
+var LazyImportsBehavior = {
+  _recordActivation: function(group) {
+    if (!this._activatedImports) {
+      this._activatedImports = new Set();
+    }
+    if (this._activatedImports.has(group)) {
+      return false;
+    }
+    this._activatedImports.add(group);
+  },
+  activateImport: function(group) {
+    // TODO(garlicnation): Test this more thoroughly. It should be possible to
+    // recover from a variety of error conditions.
+    // if (!this._recordActivation(group)) {
+    //   return;
+    // }
+    var domModule = Polymer.DomModule.import(this.localName);
+    var groupAttribute = '';
+    if (group) {
+      groupAttribute = `[group=${group}]`;
+    }
+    var query = `link${groupAttribute}[rel='lazy-import'][href]`
+    var imports = domModule.querySelectorAll(query);
+    var i, href;
+    for (i = 0; i < imports.length; i++) {
+      href = imports[i].getAttribute('href');
+      if (!href || href.length == 0) {
+        continue;
+      }
+      this.importHref(this.resolveUrl(href));
+    }
+
+  }
+}
+</script>
