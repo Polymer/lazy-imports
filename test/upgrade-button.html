@@ -13,7 +13,7 @@
     properties: {
     },
     buttonPressed: function(oldValue, newValue) {
-      this.activateImport("lazy").then((results) => {
+      this.importLazyGroup("lazy").then((results) => {
         console.log(results);
         this.fire("import-loaded", results);
       });
