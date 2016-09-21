@@ -18,21 +18,7 @@ Declarative lazy imports
 <script>
 /** @polymerBehavior */
 var LazyImportsBehavior = {
-  _recordActivation: function(group) {
-    if (!this._activatedImports) {
-      this._activatedImports = new Set();
-    }
-    if (this._activatedImports.has(group)) {
-      return false;
-    }
-    this._activatedImports.add(group);
-  },
   importLazyGroup: function(group) {
-    // TODO(garlicnation): Test this more thoroughly. It should be possible to
-    // recover from a variety of error conditions.
-    // if (!this._recordActivation(group)) {
-    //   return;
-    // }
     var domModule = Polymer.DomModule.import(this.localName);
     var groupAttribute = '';
     if (group) {
