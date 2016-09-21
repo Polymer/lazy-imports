@@ -35,7 +35,6 @@ var LazyImportsBehavior = {
           return;
         }
         var onLoad = function() {
-          console.log("loaded");
           resolve({loaded: href});
         }
         var onFailure = function() {
@@ -45,7 +44,6 @@ var LazyImportsBehavior = {
       }));
     }
     return Promise.all(promises).then(function(importRequests){
-      console.log("Everything done!");
       return importRequests.reduce(function(requests, nextRequest) {
         if (nextRequest.loaded) {
           requests.loaded.push(nextRequest.loaded);
