@@ -1,38 +1,32 @@
 # \<lazy-imports\>
 
-Declarative lazy imports
+Declarative lazy HTML imports
 
-## Install the Polymer-CLI
+## Examples
 
-First, make sure you have the [Polymer CLI](https://www.npmjs.com/package/polymer-cli) installed. Then run `polymer serve` to serve your application locally.
-
-## Viewing Your Application
-
+```html
+<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../paper-button/paper-button.html">
+<link rel="import" href="../lazy-imports.html">
+<dom-module id="upgrade-button">
+  <link rel="lazy-import" href="lazy-element.html" group="lazy">
+  <template>
+    <paper-button id="button" on-click="buttonPressed">Upgrade Element</paper-button>
+    <lazy-element id="lazy">When upgraded, this element will have a red border</lazy-element>
+  </template>
+  <script>
+  Polymer({
+    is: 'upgrade-button',
+    properties: {
+    },
+    buttonPressed: function(oldValue, newValue) {
+      this.importLazyGroup("lazy").then((results) => {
+        console.log(results);
+        this.fire("import-loaded", results);
+      });
+    },
+    behaviors: [LazyImportsBehavior]
+  })
+  </script>
+</dom-module>
 ```
-$ polymer serve
-```
-
-## Building Your Application
-
-```
-$ polymer build
-```
-
-This will create a `build/` folder with `bundled/` and `unbundled/` sub-folders
-containing a bundled (Vulcanized) and unbundled builds, both run through HTML,
-CSS, and JS optimizers.
-
-You can serve the built versions by giving `polymer serve` a folder to serve
-from:
-
-```
-$ polymer serve build/bundled
-```
-
-## Running Tests
-
-```
-$ polymer test
-```
-
-Your application is already set up to be tested via [web-component-tester](https://github.com/Polymer/web-component-tester). Run `polymer test` to run your application's test suite locally.
