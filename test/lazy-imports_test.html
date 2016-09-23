@@ -39,10 +39,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           assert.isUndefined(testEnvironment.lazy.importLoaded);
           testEnvironment.element.addEventListener("import-loaded", function(){
             console.log(testEnvironment.lazy);
-            debugger;
             assert.isTrue(testEnvironment.lazy.importLoaded);
             done();
-          })
+          });
           testEnvironment.button.click();
         });
 

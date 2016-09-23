@@ -16,8 +16,10 @@ Declarative lazy imports
 @demo demo/index.html
 -->
 <script>
+
 /** @polymerBehavior */
 var LazyImportsBehavior = {
+  __loadedImports: {},
   importLazyGroup: function(group) {
     var domModule = Polymer.DomModule.import(this.localName);
     var groupAttribute = '';
@@ -26,9 +28,8 @@ var LazyImportsBehavior = {
     }
     var query = `link${groupAttribute}[rel='lazy-import'][href]`
     var imports = domModule.querySelectorAll(query);
-    var i, href;
     var promises = [];
-    for (i = 0; i < imports.length; i++) {
+    for (var i = 0; i < imports.length; i++) {
       promises.push(new Promise((resolve, reject) => {
         var href = imports[i].getAttribute('href');
         if (!href || href.length == 0) {
@@ -40,7 +41,11 @@ var LazyImportsBehavior = {
         var onFailure = function() {
           resolve({failed: href});
         }
-        this.importHref(this.resolveUrl(href), onLoad, onFailure);
+        var resolved = this.resolveUrl(href);
+        if (!this.__loadedImports[resolved]) {
+          this.__loadedImports[resolved] = true;
+          this.importHref(this.resolveUrl(href), onLoad, onFailure);
+        }
       }));
     }
     return Promise.all(promises).then(function(importRequests){
@@ -49,7 +54,7 @@ var LazyImportsBehavior = {
           requests.loaded.push(nextRequest.loaded);
         }
         if (nextRequest.failed) {
-          requests.loaded.push(nextRequest.failed);
+          requests.failed.push(nextRequest.failed);
         }
         return requests;
       }, {loaded: [], failed: []})
