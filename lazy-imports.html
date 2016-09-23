@@ -16,49 +16,50 @@ Declarative lazy imports
 @demo demo/index.html
 -->
 <script>
-
-/** @polymerBehavior */
-var LazyImportsBehavior = {
-  __loadedImports: {},
-  importLazyGroup: function(group) {
-    var domModule = Polymer.DomModule.import(this.localName);
-    var groupAttribute = '';
-    if (group) {
-      groupAttribute = `[group=${group}]`;
+(function(){
+  var __loadedImports = {};
+  /** @polymerBehavior */
+  Polymer.LazyImportsBehavior = {
+    importLazyGroup: function(group) {
+      var domModule = Polymer.DomModule.import(this.localName);
+      var groupAttribute = '';
+      if (group) {
+        groupAttribute = `[group=${group}]`;
+      }
+      var query = `link${groupAttribute}[rel='lazy-import'][href]`
+      var imports = domModule.querySelectorAll(query);
+      var promises = [];
+      for (var i = 0; i < imports.length; i++) {
+        promises.push(new Promise((resolve, reject) => {
+          var href = imports[i].getAttribute('href');
+          if (!href || href.length == 0) {
+            return;
+          }
+          var onLoad = function() {
+            resolve({loaded: href});
+          }
+          var onFailure = function() {
+            resolve({failed: href});
+          }
+          var resolved = this.resolveUrl(href);
+          if (!__loadedImports[resolved]) {
+            __loadedImports[resolved] = true;
+            this.importHref(this.resolveUrl(href), onLoad, onFailure);
+          }
+        }));
+      }
+      return Promise.all(promises).then(function(importRequests){
+        return importRequests.reduce(function(requests, nextRequest) {
+          if (nextRequest.loaded) {
+            requests.loaded.push(nextRequest.loaded);
+          }
+          if (nextRequest.failed) {
+            requests.failed.push(nextRequest.failed);
+          }
+          return requests;
+        }, {loaded: [], failed: []})
+      });
     }
-    var query = `link${groupAttribute}[rel='lazy-import'][href]`
-    var imports = domModule.querySelectorAll(query);
-    var promises = [];
-    for (var i = 0; i < imports.length; i++) {
-      promises.push(new Promise((resolve, reject) => {
-        var href = imports[i].getAttribute('href');
-        if (!href || href.length == 0) {
-          return;
-        }
-        var onLoad = function() {
-          resolve({loaded: href});
-        }
-        var onFailure = function() {
-          resolve({failed: href});
-        }
-        var resolved = this.resolveUrl(href);
-        if (!this.__loadedImports[resolved]) {
-          this.__loadedImports[resolved] = true;
-          this.importHref(this.resolveUrl(href), onLoad, onFailure);
-        }
-      }));
-    }
-    return Promise.all(promises).then(function(importRequests){
-      return importRequests.reduce(function(requests, nextRequest) {
-        if (nextRequest.loaded) {
-          requests.loaded.push(nextRequest.loaded);
-        }
-        if (nextRequest.failed) {
-          requests.failed.push(nextRequest.failed);
-        }
-        return requests;
-      }, {loaded: [], failed: []})
-    });
   }
-}
+})()
 </script>
