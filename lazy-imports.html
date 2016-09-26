@@ -27,6 +27,8 @@ Declarative lazy imports
      * matches the provided "group". If no group is provided, Lazy HTML Imports with
      * no group will be imported.
      * 
+     * importHref is only called once per globally-unique URL.
+     * 
      * @param {string=} group The group attribute to filter on.
      * @param {HTMLElement=} fromElement The element to search for lazy imports
      *                                   within. If no element is provided, this
