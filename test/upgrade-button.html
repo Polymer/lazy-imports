@@ -19,15 +19,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script>
   Polymer({
     is: 'upgrade-button',
-    properties: {
-    },
+    behaviors: [Polymer.LazyImportsBehavior],
     buttonPressed: function(oldValue, newValue) {
       this.importLazyGroup("lazy").then((results) => {
         console.log(results);
         this.fire("import-loaded", results);
       });
-    },
-    behaviors: [Polymer.LazyImportsBehavior]
+    }
   })
   </script>
 </dom-module>

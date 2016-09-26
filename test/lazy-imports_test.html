@@ -28,6 +28,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script>
       var initTest = function() {
         var element = fixture('lazyImports');
+        Polymer.dom.flush();
         var button = element.$.button;
         var lazy = element.$.lazy;
         return {element: element, button: button, lazy: lazy};
@@ -39,6 +40,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           assert.isUndefined(testEnvironment.lazy.importLoaded);
           testEnvironment.element.addEventListener("import-loaded", function(){
             assert.isTrue(testEnvironment.lazy.importLoaded);
+            done();
           });
           testEnvironment.button.click();
         });
