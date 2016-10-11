@@ -64,7 +64,7 @@ Declarative lazy imports
           }
         }));
       }
-      return Promise.all(promises).then(function(importRequests){
+      return Promise.all(promises).then(function(importRequests) {
         return importRequests.reduce(function(requests, nextRequest) {
           if (nextRequest.loaded) {
             requests.loaded.push(nextRequest.loaded);
