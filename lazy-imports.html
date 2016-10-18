@@ -36,8 +36,8 @@ Declarative lazy imports
      *                                   id matching `this.localName`.
      */
     importLazyGroup: function(group, fromElement) {
-      if (!domModule) {
-        domModule = Polymer.DomModule.import(this.localName);
+      if (!fromElement) {
+        fromElement = Polymer.DomModule.import(this.localName);
       }
       var groupAttribute;
       if (group) {
@@ -46,7 +46,7 @@ Declarative lazy imports
         groupAttribute = 'not([group])';
       }
       var query = `link${groupAttribute}[rel='lazy-import'][href]:not([href=""])`
-      var imports = domModule.querySelectorAll(query);
+      var imports = fromElement.querySelectorAll(query);
       var promises = [];
       for (var i = 0; i < imports.length; i++) {
         promises.push(new Promise((resolve, reject) => {
