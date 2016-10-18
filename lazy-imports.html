@@ -20,7 +20,7 @@ Declarative lazy imports
 (function(){
   var __loadedImports = {};
 
-  function importLazyGroup(group, fromElement) {
+  function importLazyGroup(callingElement, group, fromElement) {
     var groupAttribute;
     if (group) {
       groupAttribute = `[group=${group}]`;
@@ -39,10 +39,10 @@ Declarative lazy imports
         var onFailure = function() {
           resolve({failed: href});
         };
-        var resolved = this.resolveUrl(href);
+        var resolved = callingElement.resolveUrl(href);
         if (!__loadedImports[resolved]) {
           __loadedImports[resolved] = true;
-          this.importHref(resolved, onLoad, onFailure);
+          callingElement.importHref(resolved, onLoad, onFailure);
         }
       }));
     }
@@ -79,7 +79,7 @@ Declarative lazy imports
       if (!fromElement) {
         fromElement = Polymer.DomModule.import(this.localName);
       }
-      return importLazyGroup(group, fromElement);
+      return importLazyGroup(this, group, fromElement);
     }
   }
 
@@ -89,7 +89,7 @@ Declarative lazy imports
       if (!fromElement) {
         fromElement = Polymer.DomModule.import(this.localName);
       }
-      return importLazyGroup(group, fromElement);
+      return importLazyGroup(this, group, fromElement);
       }
     }
   }
