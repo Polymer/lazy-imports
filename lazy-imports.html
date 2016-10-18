@@ -85,7 +85,7 @@ Declarative lazy imports
 
   Polymer.LazyImportsMixin = function(baseClass) {
     return class extends baseClass {
-      importLazyGroup(gropu, fromElement) {
+      importLazyGroup(group, fromElement) {
       if (!fromElement) {
         fromElement = Polymer.DomModule.import(this.localName);
       }
