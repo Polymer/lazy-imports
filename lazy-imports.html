@@ -19,6 +19,46 @@ Declarative lazy imports
 'use strict';
 (function(){
   var __loadedImports = {};
+
+  function importLazyGroup(callingElement, group, fromElement) {
+    var groupAttribute;
+    if (group) {
+      groupAttribute = `[group=${group}]`;
+    } else {
+      groupAttribute = 'not([group])';
+    }
+    var query = `link${groupAttribute}[rel='lazy-import'][href]:not([href=""])`
+    var imports = fromElement.querySelectorAll(query);
+    var promises = [];
+    for (var i = 0; i < imports.length; i++) {
+      promises.push(new Promise((resolve, reject) => {
+        var href = imports[i].getAttribute('href');
+        var onLoad = function() {
+          resolve({loaded: href});
+        };
+        var onFailure = function() {
+          resolve({failed: href});
+        };
+        var resolved = callingElement.resolveUrl(href);
+        if (!__loadedImports[resolved]) {
+          __loadedImports[resolved] = true;
+          callingElement.importHref(resolved, onLoad, onFailure);
+        }
+      }));
+    }
+    return Promise.all(promises).then(function(importRequests) {
+      return importRequests.reduce(function(requests, nextRequest) {
+        if (nextRequest.loaded) {
+          requests.loaded.push(nextRequest.loaded);
+        }
+        if (nextRequest.failed) {
+          requests.failed.push(nextRequest.failed);
+        }
+        return requests;
+      }, {loaded: [], failed: []});
+    });
+  }
+
   /** @polymerBehavior */
   Polymer.LazyImportsBehavior = {
     /**
@@ -36,45 +76,21 @@ Declarative lazy imports
      *                                   id matching `this.localName`.
      */
     importLazyGroup: function(group, fromElement) {
-      if (!domModule) {
-        domModule = Polymer.DomModule.import(this.localName);
+      if (!fromElement) {
+        fromElement = Polymer.DomModule.import(this.localName);
       }
-      var groupAttribute;
-      if (group) {
-        groupAttribute = `[group=${group}]`;
-      } else {
-        groupAttribute = 'not([group])';
+      return importLazyGroup(this, group, fromElement);
+    }
+  }
+
+  Polymer.LazyImportsMixin = function(baseClass) {
+    return class extends baseClass {
+      importLazyGroup(group, fromElement) {
+      if (!fromElement) {
+        fromElement = Polymer.DomModule.import(this.localName);
       }
-      var query = `link${groupAttribute}[rel='lazy-import'][href]:not([href=""])`
-      var imports = domModule.querySelectorAll(query);
-      var promises = [];
-      for (var i = 0; i < imports.length; i++) {
-        promises.push(new Promise((resolve, reject) => {
-          var href = imports[i].getAttribute('href');
-          var onLoad = function() {
-            resolve({loaded: href});
-          };
-          var onFailure = function() {
-            resolve({failed: href});
-          };
-          var resolved = this.resolveUrl(href);
-          if (!__loadedImports[resolved]) {
-            __loadedImports[resolved] = true;
-            this.importHref(resolved, onLoad, onFailure);
-          }
-        }));
+      return importLazyGroup(this, group, fromElement);
       }
-      return Promise.all(promises).then(function(importRequests) {
-        return importRequests.reduce(function(requests, nextRequest) {
-          if (nextRequest.loaded) {
-            requests.loaded.push(nextRequest.loaded);
-          }
-          if (nextRequest.failed) {
-            requests.failed.push(nextRequest.failed);
-          }
-          return requests;
-        }, {loaded: [], failed: []});
-      });
     }
   }
 })()
