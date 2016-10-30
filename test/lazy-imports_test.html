@@ -44,6 +44,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           });
           testEnvironment.button.click();
         });
+        test('Still resolves after second attempt to import', function(done) {
+          var called = false;
+          var testEnvironment = initTest();
+            testEnvironment.element.addEventListener("import-loaded", function() {
+              if (called) {
+                assert.isTrue(testEnvironment.lazy.importLoaded);
+                done();
+              } else {
+                called = true; //market so we can check for a second firing
+                testEnvironment.button.click();
+              }
+          });
+          testEnvironment.button.click();
+        });
 
       });
     </script>
