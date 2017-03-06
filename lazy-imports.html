@@ -41,11 +41,11 @@ Declarative lazy imports
       }
       var groupAttribute;
       if (group) {
-        groupAttribute = `[group=${group}]`;
+        groupAttribute = '[group=' + group + ']';
       } else {
         groupAttribute = 'not([group])';
       }
-      var query = `link${groupAttribute}[rel='lazy-import'][href]:not([href=""])`
+      var query = 'link' + groupAttribute + '[rel=\'lazy-import\'][href]:not([href=""])';
       var imports = fromElement.querySelectorAll(query);
       var promises = [];
       for (var i = 0; i < imports.length; i++) {
