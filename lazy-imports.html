@@ -61,6 +61,8 @@ Declarative lazy imports
           if (!__loadedImports[resolved]) {
             __loadedImports[resolved] = true;
             this.importHref(resolved, onLoad, onFailure);
+          } else {
+            resolve({loaded: href});
           }
         }));
       }
