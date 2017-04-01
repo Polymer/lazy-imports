@@ -25,7 +25,7 @@ Declarative lazy HTML imports
         this.fire("import-loaded", results);
       });
     },
-    behaviors: [LazyImportsBehavior]
+    behaviors: [Polymer.LazyImportBehavior]
   })
   </script>
 </dom-module>
