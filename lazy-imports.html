@@ -26,9 +26,9 @@ Declarative lazy imports
      * dom-module where the calling element is defined, where the "group" attribute
      * matches the provided "group". If no group is provided, Lazy HTML Imports with
      * no group will be imported.
-     * 
+     *
      * importHref is only called once per globally-unique URL.
-     * 
+     *
      * @param {string=} group The group attribute to filter on.
      * @param {HTMLElement=} fromElement The element to search for lazy imports
      *                                   within. If no element is provided, this
@@ -49,7 +49,7 @@ Declarative lazy imports
       var imports = fromElement.querySelectorAll(query);
       var promises = [];
       for (var i = 0; i < imports.length; i++) {
-        promises.push(new Promise((resolve, reject) => {
+        promises.push(new Promise(function(resolve, reject) {
           var href = imports[i].getAttribute('href');
           var onLoad = function() {
             resolve({loaded: href});
@@ -64,7 +64,7 @@ Declarative lazy imports
           } else {
             resolve({loaded: href});
           }
-        }));
+        }.bind(this)));
       }
       return Promise.all(promises).then(function(importRequests) {
         return importRequests.reduce(function(requests, nextRequest) {

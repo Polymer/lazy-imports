@@ -17,9 +17,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <content></content>
   </template>
   <script>
-  Polymer({
-    is: 'lazy-element',
-    importLoaded: true
-  })
+    Polymer({
+      is: 'lazy-element',
+      properties: {
+        importLoaded: {
+          type: Boolean,
+          value: true
+        }
+      }
+    });
   </script>
 </dom-module>

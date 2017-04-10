@@ -15,17 +15,16 @@ Declarative lazy HTML imports
     <lazy-element>When upgraded, this element will have a red border</lazy-element>
   </template>
   <script>
-  Polymer({
-    is: 'upgrade-button',
-    properties: {},
-    buttonPressed: function() {
-      this.importLazyGroup("lazy").then(function(results) {
-        console.log(results);
-        this.fire("import-loaded", results);
-      }.bind(this));
-    },
-    behaviors: [Polymer.LazyImportsBehavior]
-  })
+    Polymer({
+      is: 'upgrade-button',
+      behaviors: [Polymer.LazyImportsBehavior],
+      buttonPressed: function() {
+        this.importLazyGroup("lazy").then(function(results) {
+          console.log(results);
+          this.fire("import-loaded", results);
+        }.bind(this));
+      }
+    });
   </script>
 </dom-module>
 ```
