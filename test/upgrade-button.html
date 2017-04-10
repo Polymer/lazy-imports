@@ -21,7 +21,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer({
       is: 'upgrade-button',
       behaviors: [Polymer.LazyImportsBehavior],
-      buttonPressed: function(oldValue, newValue) {
+      buttonPressed: function() {
         this.importLazyGroup("lazy").then(function(results) {
           console.log(results);
           this.fire("import-loaded", results);
