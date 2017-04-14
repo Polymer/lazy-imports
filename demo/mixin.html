@@ -17,7 +17,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
 
-  <link rel="import" href="../lazy-imports-behavior.html">
+  <link rel="import" href="../lazy-imports-mixin.html">
   <link rel="import" href="../../paper-button/paper-button.html">
   <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
   <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
@@ -35,23 +35,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <upgrade-button></upgrade-button>
 
         <dom-module id="upgrade-button">
-          <link rel="lazy-import" group="lazy" href="../test/1.x/lazy-element.html">
+          <link rel="lazy-import" group="lazy" href="../test/2.0/lazy-element.html">
           <template>
             <paper-button id="button" raised on-tap="buttonPressed">Upgrade Element</paper-button>
             <hr>
             <lazy-element id="lazy">When upgraded, this element will have a red border</lazy-element>
           </template>
           <script>
-            Polymer({
-              is: 'upgrade-button',
-              behaviors: [Polymer.LazyImportsBehavior],
-              buttonPressed: function() {
-                this.importLazyGroup('lazy').then(function(results) {
+            class UpgradeButton extends Polymer.LazyImportsMixin(Polymer.Element) {
+              static get is() { return 'upgrade-button'; }
+              buttonPressed() {
+                this.importLazyGroup('lazy').then((results) => {
                   console.log(results);
-                  this.fire('import-loaded', results);
-                }.bind(this));
+                  this.dispatchEvent(new CustomEvent('import-loaded', results));
+                });
               }
-            });
+            }
+            customElements.define(UpgradeButton.is, UpgradeButton);
           </script>
         </dom-module>
 
