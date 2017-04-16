@@ -11,20 +11,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="lazy-imports-import.html">
 
-<!--
-`lazy-imports`
-<link rel="import" href="./lazy-imports-import.html">
-Declarative lazy imports
-
-@demo demo/index.html
--->
 <script>
   (() => {
+    /**
+     * `Polymer.LazyImportsMixin` enables a custom element to use declarative lazy imports
+     *
+     * @demo demo/index.html
+     * @polymerMixin
+     */
     Polymer.LazyImportsMixin = (baseClass) => {
       return class extends baseClass {
         /**
-         * Calls Polymer.Base.importHref for each "<link rel="lazy-import" in the
-         * dom-module where the calling element is defined, where the "group" attribute
+         * Calls `Polymer.Base.importHref` for each `<link rel="lazy-import"` in the
+         * `dom-module` where the calling element is defined, where the "group" attribute
          * matches the provided "group". If no group is provided, Lazy HTML Imports with
          * no group will be imported.
          *
@@ -33,7 +32,7 @@ Declarative lazy imports
          * @param {string=} group The group attribute to filter on.
          * @param {HTMLElement=} fromElement The element to search for lazy imports
          *                                   within. If no element is provided, this
-         *                                   behavior will find a dom-module with an
+         *                                   mixin will find a `dom-module` with an
          *                                   id matching `this.localName`.
          * @return {Promise}
          */
@@ -41,6 +40,6 @@ Declarative lazy imports
           return Polymer.__importLazyGroup(this, group, fromElement);
         }
       }
-    }
+    };
   })();
 </script>

@@ -7,7 +7,6 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
-
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="lazy-imports-import.html">
 
@@ -15,20 +14,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   'use strict';
 
   (function() {
-    /** @polymerBehavior */
+    if (Polymer.Element) {
+     console.warn('LazyImportsBehavior is deprecated in Polymer 2.0');
+    }
+
+    /**
+     * `Polymer.LazyImportsBehavior` enables a custom element to use declarative lazy imports
+     *
+     * @demo demo/index.html
+     * @polymerBehavior
+     */
     Polymer.LazyImportsBehavior = {
       /**
-       * Calls Polymer.Base.importHref for each "<link rel="lazy-import" in the
-       * dom-module where the calling element is defined, where the "group" attribute
+       * Calls `Polymer.Base.importHref` for each `<link rel="lazy-import"` in the
+       * `dom-module` where the calling element is defined, where the "group" attribute
        * matches the provided "group". If no group is provided, Lazy HTML Imports with
        * no group will be imported.
        *
-       * importHref is only called once per globally-unique URL.
+       * `importHref` is only called once per globally-unique URL.
        *
        * @param {string=} group The group attribute to filter on.
        * @param {HTMLElement=} fromElement The element to search for lazy imports
        *                                   within. If no element is provided, this
-       *                                   behavior will find a dom-module with an
+       *                                   behavior will find a `dom-module` with an
        *                                   id matching `this.localName`.
        * @return {Promise}
        */
