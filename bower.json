@@ -2,6 +2,7 @@
   "name": "lazy-imports",
   "description": "Declarative lazy imports",
   "main": "lazy-imports.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.4.0"
   },
