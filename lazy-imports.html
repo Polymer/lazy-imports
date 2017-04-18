@@ -51,7 +51,7 @@ Declarative lazy imports
       var imports = fromElement.querySelectorAll(query);
       var promises = [];
       for (var i = 0; i < imports.length; i++) {
-        promises.push(new Promise((resolve, reject) => {
+        promises.push(new Promise(function(resolve, reject) {
           var href = imports[i].getAttribute('href');
           var onLoad = function() {
             resolve({loaded: href});
@@ -66,7 +66,7 @@ Declarative lazy imports
           } else {
             resolve({loaded: href});
           }
-        }));
+        }.bind(this)));
       }
       return Promise.all(promises).then(function(importRequests) {
         return importRequests.reduce(function(requests, nextRequest) {
