@@ -17,23 +17,24 @@ Declarative lazy imports
 -->
 <script>
 'use strict';
-(function(){
+(function() {
   var __loadedImports = {};
   /** @polymerBehavior */
   Polymer.LazyImportsBehavior = {
     /**
      * Calls Polymer.Base.importHref for each "<link rel="lazy-import" in the
-     * dom-module where the calling element is defined, where the "group" attribute
-     * matches the provided "group". If no group is provided, Lazy HTML Imports with
-     * no group will be imported.
+     * dom-module where the calling element is defined, where the "group"
+     * attribute matches the provided "group". If no group is provided, Lazy
+     * HTML Imports with no group will be imported.
      *
      * importHref is only called once per globally-unique URL.
      *
      * @param {string=} group The group attribute to filter on.
      * @param {HTMLElement=} fromElement The element to search for lazy imports
-     *                                   within. If no element is provided, this
-     *                                   behavior will find a dom-module with an
-     *                                   id matching `this.localName`.
+     *                                   within. If no element is provided,
+     *                                   this behavior will find a dom-module
+     *                                   with an id matching `this.localName`.
+     * @return {Promise}
      */
     importLazyGroup: function(group, fromElement) {
       if (!fromElement) {
@@ -45,7 +46,8 @@ Declarative lazy imports
       } else {
         groupAttribute = 'not([group])';
       }
-      var query = 'link' + groupAttribute + '[rel=\'lazy-import\'][href]:not([href=""])';
+      var query = 'link' + groupAttribute +
+        '[rel=\'lazy-import\'][href]:not([href=""])';
       var imports = fromElement.querySelectorAll(query);
       var promises = [];
       for (var i = 0; i < imports.length; i++) {
@@ -77,7 +79,7 @@ Declarative lazy imports
           return requests;
         }, {loaded: [], failed: []});
       });
-    }
-  }
-})()
+    },
+  };
+})();
 </script>

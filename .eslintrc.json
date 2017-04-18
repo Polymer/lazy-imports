@@ -8,10 +8,10 @@
   ],
   "rules": {
     "no-var": "off",
-    "new-cap": ["error", { "capIsNewExceptions": ["Polymer"] }],
-    "prefer-arrow-callback": "off"
+    "new-cap": ["error", { "capIsNewExceptions": ["Polymer"] }]
   },
   "globals": {
-    "Polymer": true
+    "Polymer": true,
+    "Promise": true
   }
 }
