@@ -44,7 +44,7 @@ Declarative lazy imports
       if (group) {
         groupAttribute = '[group=' + group + ']';
       } else {
-        groupAttribute = 'not([group])';
+        groupAttribute = ':not([group])';
       }
       var query = 'link' + groupAttribute +
         '[rel=\'lazy-import\'][href]:not([href=""])';
