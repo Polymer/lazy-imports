@@ -1,0 +1,28 @@
+language: node_js
+sudo: required
+dist: trusty
+node_js: stable
+before_script:
+  - npm install -g bower polymer-cli@next eslint eslint-plugin-html eslint-config-google
+  - polymer install
+  - sudo mv /usr/bin/google-chrome /usr/bin/google-chrome-old
+  - sudo mv /usr/bin/google-chrome-beta /usr/bin/google-chrome
+addons:
+  firefox: latest
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-beta
+script:
+  - eslint -c .eslintrc.json *.html
+  - polymer lint --rules polymer-1 --input *.html
+  - xvfb-run polymer test
+#  - >-
+#    if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then polymer test -s 'default';
+#    fi
+#env:
+#  global:
+#    - secure: >-
+#
+#    - secure: >-
