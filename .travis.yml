@@ -1,0 +1,31 @@
+language: node_js
+sudo: required
+dist: trusty
+node_js: stable
+cache:
+  directories:
+    - node_modules
+addons:
+  firefox: latest
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-beta
+install:
+  - npm install -g bower polymer-cli@next
+  - polymer install --variants
+before_script:
+  - sudo mv /usr/bin/google-chrome /usr/bin/google-chrome-old
+  - sudo mv /usr/bin/google-chrome-beta /usr/bin/google-chrome
+  - polymer lint --rules polymer-2-hybrid --input *.html
+script:
+  - xvfb-run polymer test
+#  - >-
+#    if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then polymer test -s 'default';
+#    fi
+#env:
+#  global:
+#    - secure: >-
+#
+#    - secure: >-

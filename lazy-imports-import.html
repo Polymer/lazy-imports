@@ -1,0 +1,55 @@
+<!--
+@license
+Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<script>
+  (function() {
+    var __loadedImports = {};
+
+    Polymer.__importLazyGroup = function(callingElement, group, fromElement) {
+      if (!fromElement) {
+        fromElement = Polymer.DomModule.import(callingElement.localName);
+      }
+
+      var groupAttribute = group ? '[group=' + group + ']' : ':not([group])';
+      var query = 'link' + groupAttribute + '[rel=\'lazy-import\'][href]:not([href=\'\'])';
+      var imports = fromElement.querySelectorAll(query);
+      var promises = [];
+      for (var i = 0; i < imports.length; i++) {
+        promises.push(new Promise(function(resolve) {
+          var href = imports[i].getAttribute('href');
+          var onLoad = function() {
+            resolve({loaded: href});
+          };
+          var onFailure = function() {
+            resolve({failed: href});
+          };
+          var resolved = callingElement.resolveUrl(href);
+          if (!__loadedImports[resolved]) {
+            __loadedImports[resolved] = true;
+            var importHref = Polymer.importHref || callingElement.importHref;
+            importHref(resolved, onLoad, onFailure);
+          } else {
+            resolve({loaded: href});
+          }
+        }));
+      }
+      return Promise.all(promises).then(function(importRequests) {
+        return importRequests.reduce(function(requests, nextRequest) {
+          if (nextRequest.loaded) {
+            requests.loaded.push(nextRequest.loaded);
+          }
+          if (nextRequest.failed) {
+            requests.failed.push(nextRequest.failed);
+          }
+          return requests;
+        }, {loaded: [], failed: []});
+      });
+    };
+  })();
+</script>
