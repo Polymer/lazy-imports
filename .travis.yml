@@ -19,6 +19,7 @@ before_script:
   - sudo mv /usr/bin/google-chrome /usr/bin/google-chrome-old
   - sudo mv /usr/bin/google-chrome-beta /usr/bin/google-chrome
   - polymer lint --rules polymer-2-hybrid --input *.html
+  - eslint -c .eslintrc.json *.html
 script:
   - xvfb-run polymer test
 #  - >-
