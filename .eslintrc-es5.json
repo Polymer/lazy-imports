@@ -6,13 +6,9 @@
   "plugins": [
     "html"
   ],
-  "parserOptions": {
-    "ecmaVersion": 6,
-    "sourceType": "script"
-  },
   "rules": {
-    "new-cap": ["error", { "capIsNewExceptions": ["Polymer"] }],
-    "valid-jsdoc": "off"
+    "no-var": "off",
+    "new-cap": ["error", { "capIsNewExceptions": ["Polymer"] }]
   },
   "globals": {
     "Polymer": true,

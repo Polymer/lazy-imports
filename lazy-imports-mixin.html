@@ -12,7 +12,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="lazy-imports-import.html">
 
 <script>
-  (function() {
+  (() => {
     /**
      * `Polymer.LazyImportsMixin` enables a custom element to use declarative
      * lazy imports
@@ -41,7 +41,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         importLazyGroup(group, fromElement) {
           return Polymer.__importLazyGroup(this, group, fromElement);
         }
-      }
+      };
     };
   })();
 </script>

@@ -17,7 +17,8 @@ install:
   - polymer install --variants
 before_script:
   - polymer lint --rules polymer-2-hybrid --input *.html
-  - eslint -c .eslintrc.json *.html
+  - eslint -c .eslintrc-es5.json lazy-imports-import.html lazy-imports-behavior.html
+  - eslint -c .eslintrc.json lazy-imports-mixin.html
 script:
   - xvfb-run polymer test
 #  - >-
