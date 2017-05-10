@@ -11,13 +11,11 @@ addons:
     sources:
       - google-chrome
     packages:
-      - google-chrome-beta
+      - google-chrome-stable
 install:
-  - npm install -g bower polymer-cli@next eslint eslint-plugin-html eslint-config-google
+  - npm install -g bower polymer-cli eslint eslint-plugin-html eslint-config-google
   - polymer install --variants
 before_script:
-  - sudo mv /usr/bin/google-chrome /usr/bin/google-chrome-old
-  - sudo mv /usr/bin/google-chrome-beta /usr/bin/google-chrome
   - polymer lint --rules polymer-2-hybrid --input *.html
   - eslint -c .eslintrc.json *.html
 script:
