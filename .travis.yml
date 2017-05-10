@@ -13,7 +13,7 @@ addons:
     packages:
       - google-chrome-beta
 install:
-  - npm install -g bower polymer-cli@next
+  - npm install -g bower polymer-cli@next eslint
   - polymer install --variants
 before_script:
   - sudo mv /usr/bin/google-chrome /usr/bin/google-chrome-old
