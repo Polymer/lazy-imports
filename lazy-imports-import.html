@@ -17,7 +17,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       var groupAttribute = group ? '[group=' + group + ']' : ':not([group])';
-      var query = 'link' + groupAttribute + '[rel=\'lazy-import\'][href]:not([href=\'\'])';
+      var query =
+        'link' +groupAttribute+ '[rel=\'lazy-import\'][href]:not([href=\'\'])';
       var imports = fromElement.querySelectorAll(query);
       var promises = [];
       for (var i = 0; i < imports.length; i++) {
