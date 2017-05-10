@@ -12,9 +12,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="lazy-imports-import.html">
 
 <script>
-  () => {
+  (function() {
     /**
-     * `Polymer.LazyImportsMixin` enables a custom element to use declarative lazy imports
+     * `Polymer.LazyImportsMixin` enables a custom element to use declarative
+     * lazy imports
      *
      * @demo demo/index.html
      * @polymerMixin
@@ -22,18 +23,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     Polymer.LazyImportsMixin = (baseClass) => {
       return class extends baseClass {
         /**
-         * Calls `Polymer.Base.importHref` for each `<link rel="lazy-import"` in the
-         * `dom-module` where the calling element is defined, where the "group" attribute
-         * matches the provided "group". If no group is provided, Lazy HTML Imports with
-         * no group will be imported.
+         * Calls `Polymer.Base.importHref` for each `<link rel="lazy-import"` in
+         * the `dom-module` where the calling element is defined, where the
+         * "group" attribute matches the provided "group". If no group is
+         * provided, Lazy HTML Imports with no group will be imported.
          *
          * importHref is only called once per globally-unique URL.
          *
          * @param {string=} group The group attribute to filter on.
-         * @param {HTMLElement=} fromElement The element to search for lazy imports
-         *                                   within. If no element is provided, this
-         *                                   mixin will find a `dom-module` with an
-         *                                   id matching `this.localName`.
+         * @param {HTMLElement=} fromElement The element to search for lazy
+         *                                   imports within. If no element is
+         *                                   provided, this mixin will find a
+         *                                   `dom-module` with an id matching
+         *                                   `this.localName`.
          * @return {Promise}
          */
         importLazyGroup(group, fromElement) {
@@ -41,5 +43,5 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
     };
-  }();
+  })();
 </script>
