@@ -21,13 +21,13 @@
   "homepage": "https://github.com/Polymer/lazy-imports",
   "ignore": [],
   "dependencies": {
-    "polymer": "Polymer/polymer#^1.9 - 2"
+    "polymer": "Polymer/polymer#1.9 - 2"
   },
   "devDependencies": {
     "iron-demo-helpers": "PolymerElements/iron-demo-helpers#1 - 2",
     "paper-button": "PolymerElements/paper-button#1 - 2",
     "test-fixture": "PolymerElements/test-fixture#^3.0.0-rc.1",
-    "web-component-tester": "Polymer/web-component-tester#^6.0.0-prerelease.10",
+    "web-component-tester": "Polymer/web-component-tester#^6.0.0",
     "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
   },
   "variants": {
@@ -41,7 +41,13 @@
         "test-fixture": "PolymerElements/test-fixture#^1.0.0",
         "web-component-tester": "Polymer/web-component-tester#^5.0.0",
         "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+      },
+      "resolutions": {
+        "webcomponentsjs": "^0.7.0"
       }
     }
+  },
+  "resolutions": {
+    "webcomponentsjs": "^1.0.0"
   }
 }
