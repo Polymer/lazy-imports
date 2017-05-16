@@ -1,15 +1,12 @@
 {
   "extends": ["eslint:recommended", "google"],
   "env": {
-    "browser": true
+    "browser": true,
+    "es6": true
   },
   "plugins": [
     "html"
   ],
-  "parserOptions": {
-    "ecmaVersion": 6,
-    "sourceType": "script"
-  },
   "rules": {
     "new-cap": ["error", { "capIsNewExceptions": ["Polymer"] }],
     "valid-jsdoc": "off"
