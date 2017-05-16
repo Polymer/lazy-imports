@@ -12,7 +12,6 @@
     "valid-jsdoc": "off"
   },
   "globals": {
-    "Polymer": true,
-    "Promise": true
+    "Polymer": true
   }
 }
