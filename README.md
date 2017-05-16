@@ -1,4 +1,4 @@
-# \<link[rel="lazy-import"]\> [![Travis](https://img.shields.io/travis/Polymer/lazy-imports.svg?style=flat-square)](https://github.com/Polymer/lazy-imports/)
+# \<link[rel="lazy-import"]\> [![Build Status](https://img.shields.io/travis/Polymer/lazy-imports.svg?style=flat-square)](https://travis-ci.org/Polymer/lazy-imports)
 
 Declarative lazy HTML imports
 
