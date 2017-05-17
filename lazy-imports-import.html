@@ -10,6 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <script>
   (function() {
     var __loadedImports = {};
+    var __failedImports = {};
 
     Polymer.__importLazyGroup = function(callingElement, group, fromElement) {
       if (!fromElement) {
@@ -25,12 +26,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var href = imports[i].getAttribute('href');
         var resolvedUrl = callingElement.resolveUrl(href);
 
-        if (!__loadedImports[resolvedUrl]) {
+        if (__failedImports[resolvedUrl] || !__loadedImports[resolvedUrl]) {
           __loadedImports[resolvedUrl] = new Promise(function(resolve) {
             var onLoad = function() {
+              delete __failedImports[resolvedUrl];
               resolve({loaded: href});
             };
             var onFailure = function() {
+              __failedImports[resolvedUrl] = __loadedImports[resolvedUrl];
               resolve({failed: href});
             };
 
