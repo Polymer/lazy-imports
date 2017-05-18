@@ -33,7 +33,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               resolve({loaded: href});
             };
             var onFailure = function() {
-              __failedImports[resolvedUrl] = __loadedImports[resolvedUrl];
+              __failedImports[resolvedUrl] = true;
               resolve({failed: href});
             };
 
