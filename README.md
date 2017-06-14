@@ -8,7 +8,7 @@ What this repo adds on top of the above is a declarative way to describe the res
 
 To use lazy imports, write an HTML import as usual, except:
 
-  1) give it a rel of `lazy-import` instead of `import`
+  1) give it a `rel` attribute of `lazy-import` instead of `import`
   2) give each import a `group` attribute, you'll use that as a key later
   3) put the lazy import inside the `<dom-module>` of your element, but outside of its template.
   
