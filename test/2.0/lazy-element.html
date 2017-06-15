@@ -17,21 +17,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         border: 2px solid red;
       }
     </style>
+
     <slot></slot>
   </template>
+
   <script>
     class LazyElement extends Polymer.Element {
       static get is() { return 'lazy-element'; }
+
       static get properties() {
         return {
           importLoaded: Boolean,
         };
       }
+
       ready() {
         super.ready();
         this.importLoaded = true;
       }
     }
+
     customElements.define(LazyElement.is, LazyElement);
   </script>
 </dom-module>

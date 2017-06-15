@@ -22,7 +22,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <link rel="import" href="../lazy-imports-mixin.html">
   <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
   <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
-  <link rel="import" href="../../paper-button/paper-button.html">
 
   <custom-style>
     <style is="custom-style" include="demo-pages-shared-styles">
@@ -39,7 +38,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <dom-module id="upgrade-button-behavior">
           <link rel="lazy-import" group="lazy" href="../test/1.x/lazy-element.html">
           <template>
-            <paper-button raised on-click="buttonPressed">Upgrade Element</paper-button>
+            <button on-click="buttonPressed">Upgrade Element</button>
             <hr>
             <lazy-element-behavior>When upgraded, this element will have a red border</lazy-element-behavior>
           </template>
@@ -70,7 +69,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <dom-module id="upgrade-button">
           <link rel="lazy-import" group="lazy" href="../test/2.0/lazy-element.html">
           <template>
-            <paper-button raised on-click="buttonPressed">Upgrade Element</paper-button>
+            <button on-click="buttonPressed">Upgrade Element</button>
             <hr>
             <lazy-element>When upgraded, this element will have a red border</lazy-element>
           </template>
