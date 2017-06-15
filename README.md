@@ -1,6 +1,6 @@
-# \<link rel="lazy-import"\>
+[![Build Status](https://travis-ci.org/Polymer/lazy-imports.svg?branch=master)](https://travis-ci.org/Polymer/lazy-imports)
 
-[![Build Status](https://img.shields.io/travis/Polymer/lazy-imports.svg?style=flat-square)](https://travis-ci.org/Polymer/lazy-imports)
+# \<link rel="lazy-import"\>
 
 This repo implements declarative, lazy, HTML Imports.
 
