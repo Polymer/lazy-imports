@@ -10,6 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <script>
   (function() {
     var __loadedImports = {};
+    var __failedImports = {};
 
     Polymer.__importLazyGroup = function(callingElement, group, fromElement) {
       if (!fromElement) {
@@ -22,23 +23,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var imports = fromElement.querySelectorAll(query);
       var promises = [];
       for (var i = 0; i < imports.length; i++) {
-        promises.push(new Promise(function(resolve) {
-          var href = imports[i].getAttribute('href');
-          var onLoad = function() {
-            resolve({loaded: href});
-          };
-          var onFailure = function() {
-            resolve({failed: href});
-          };
-          var resolved = callingElement.resolveUrl(href);
-          if (!__loadedImports[resolved]) {
-            __loadedImports[resolved] = true;
+        var href = imports[i].getAttribute('href');
+        var resolvedUrl = callingElement.resolveUrl(href);
+
+        if (__failedImports[resolvedUrl] || !__loadedImports[resolvedUrl]) {
+          __loadedImports[resolvedUrl] = new Promise(function(resolve) {
+            var onLoad = function() {
+              delete __failedImports[resolvedUrl];
+              resolve({loaded: href});
+            };
+            var onFailure = function() {
+              __failedImports[resolvedUrl] = true;
+              resolve({failed: href});
+            };
+
             var importHref = Polymer.importHref || callingElement.importHref;
-            importHref(resolved, onLoad, onFailure);
-          } else {
-            resolve({loaded: href});
-          }
-        }));
+            importHref(resolvedUrl, onLoad, onFailure);
+          });
+        }
+
+        promises.push(__loadedImports[resolvedUrl]);
       }
       return Promise.all(promises).then(function(importRequests) {
         return importRequests.reduce(function(requests, nextRequest) {
