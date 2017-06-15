@@ -21,7 +21,7 @@ Then apply the `LazyImportsMixin` mixin (or `LazyImportsBehavior`) to your eleme
 ### Polymer 2.0 – LazyImportsMixin
 
 ```html
-<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../polymer/polymer-element.html">
 <link rel="import" href="../../paper-button/paper-button.html">
 <link rel="import" href="../lazy-imports-mixin.html">
 
