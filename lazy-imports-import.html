@@ -29,11 +29,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var groupAttribute = group ? '[group=' + group + ']' : ':not([group])';
       var query =
         'link' +groupAttribute+ '[rel=\'lazy-import\'][href]:not([href=\'\'])';
-      var imports = fromElement.querySelectorAll(query);
+      var links = fromElement.querySelectorAll(query);
 
-      return Promise.all(Array.from(imports).map(function(i) {
+      return Promise.all(Array.from(links).map(function(link) {
         var promise;
-        var href = i.getAttribute('href');
+        var href = link.getAttribute('href');
         var resolvedUrl = callingElement.resolveUrl(href);
 
         var requestImport = function() {
