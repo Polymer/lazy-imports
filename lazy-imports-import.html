@@ -9,9 +9,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 <script>
   (function() {
-    var __loadedImports = {};
+    var __importPromises = {};
 
-    Polymer.__importLazyGroup = function(callingElement, group, fromElement) {
+    /**
+     * TODO:
+     *
+     * @param {Element} callingElement
+     * @param {String} [group]
+     * @param {Element} [fromElement]
+     * @param {Object} [options]
+     * @return {Promise}
+     */
+    Polymer.__importLazyGroup = function(
+        callingElement, group, fromElement, options) {
       if (!fromElement) {
         fromElement = Polymer.DomModule.import(callingElement.localName);
       }
@@ -20,27 +30,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var query =
         'link' +groupAttribute+ '[rel=\'lazy-import\'][href]:not([href=\'\'])';
       var imports = fromElement.querySelectorAll(query);
-      var promises = [];
-      for (var i = 0; i < imports.length; i++) {
-        promises.push(new Promise(function(resolve) {
-          var href = imports[i].getAttribute('href');
-          var onLoad = function() {
-            resolve({loaded: href});
-          };
-          var onFailure = function() {
-            resolve({failed: href});
-          };
-          var resolved = callingElement.resolveUrl(href);
-          if (!__loadedImports[resolved]) {
-            __loadedImports[resolved] = true;
+
+      return Promise.all(Array.from(imports).map(function(i) {
+        var promise;
+        var href = i.getAttribute('href');
+        var resolvedUrl = callingElement.resolveUrl(href);
+
+        var requestImport = function() {
+          return new Promise(function(resolve) {
+            var onLoad = function() {
+              resolve({loaded: href});
+            };
+            var onFailure = function() {
+              resolve({failed: href});
+            };
+
             var importHref = Polymer.importHref || callingElement.importHref;
-            importHref(resolved, onLoad, onFailure);
-          } else {
-            resolve({loaded: href});
+            importHref(resolvedUrl, onLoad, onFailure);
+          });
+        };
+
+        if (__importPromises.hasOwnProperty(resolvedUrl)) {
+          promise = __importPromises[resolvedUrl];
+          if (options && options.retry) {
+            promise =  promise.catch(requestImport);
           }
-        }));
-      }
-      return Promise.all(promises).then(function(importRequests) {
+        } else {
+          promise = requestImport();
+        }
+
+        return __importPromises[resolvedUrl] = promise;
+      })).then(function(importRequests) {
         return importRequests.reduce(function(requests, nextRequest) {
           if (nextRequest.loaded) {
             requests.loaded.push(nextRequest.loaded);
