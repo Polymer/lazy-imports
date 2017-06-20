@@ -9,20 +9,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../../../polymer/polymer.html">
-<link rel="import" href="../../../paper-button/paper-button.html">
 <link rel="import" href="../../lazy-imports-mixin.html">
 
 <dom-module id="upgrade-button">
   <link rel="lazy-import" group="lazy" href="lazy-element.html">
+  <link rel="lazy-import" group="lazyFail" href="lazy-fail-element.html">
   <template>
-    <paper-button id="button" on-click="buttonPressed">Upgrade Element</paper-button>
+    <button id="button" on-click="buttonPressed">Upgrade Element</button>
     <lazy-element id="lazy">When upgraded, this element will have a red border</lazy-element>
+    <lazy-fail-element id="lazyFail"></lazy-fail-element>
   </template>
   <script>
     class UpgradeButton extends Polymer.LazyImportsMixin(Polymer.Element) {
       static get is() { return 'upgrade-button'; }
+      static get properties() {
+        return {
+          retry: Boolean,
+          group: {
+            type: String,
+            value: 'lazy'
+          }
+        };
+      }
+
       buttonPressed() {
-        this.importLazyGroup('lazy').then((results) => {
+        this.importLazyGroup(this.group, undefined, {retry: this.retry}).then((results) => {
           console.log(results);
           this.dispatchEvent(new CustomEvent('import-loaded', results));
         });

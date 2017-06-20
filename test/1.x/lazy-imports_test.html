@@ -30,9 +30,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     var initTest = function() {
       var element = fixture('lazyImports');
       Polymer.dom.flush();
-      var button = element.$.button;
-      var lazy = element.$.lazy;
-      return {element: element, button: button, lazy: lazy};
+      return {
+        element: element,
+        button: element.$.button,
+        lazy: element.$.lazy,
+        lazyFail: element.$.lazyFail,
+      };
     }
     suite('lazy-imports', function() {
 
@@ -48,18 +51,60 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       test('Still resolves after second attempt to import', function(done) {
         var called = false;
         var testEnvironment = initTest();
-          testEnvironment.element.addEventListener('import-loaded', function() {
-            if (called) {
-              assert.isTrue(testEnvironment.lazy.importLoaded);
-              done();
-            } else {
-              called = true; // mark it so we can check for a second firing
-              testEnvironment.button.click();
-            }
+        testEnvironment.element.addEventListener('import-loaded', function() {
+          if (called) {
+            assert.isTrue(testEnvironment.lazy.importLoaded);
+            done();
+          } else {
+            called = true; // mark it so we can check for a second firing
+            testEnvironment.button.click();
+          }
         });
         testEnvironment.button.click();
       });
+      test('Still rejects after second attempt to import a previously failed dependency', function(done) {
+        var called = false;
+        var testEnvironment = initTest();
+        testEnvironment.element.group = 'lazyFail';
 
+        var stubbedImport = sinon.stub(
+          (Polymer.Element ? Polymer : testEnvironment.element), 'importHref', (url, resolve, reject) => reject());
+
+        testEnvironment.element.addEventListener('import-loaded', function() {
+          if (called) {
+            assert.isUndefined(testEnvironment.lazyFail.importLoaded);
+            done();
+          } else {
+            assert.isUndefined(testEnvironment.lazyFail.importLoaded);
+              (Polymer.Element ? Polymer : testEnvironment.element).importHref.restore();
+            called = true; // mark it so we can check for a second firing
+            testEnvironment.button.click();
+          }
+        });
+        testEnvironment.button.click();
+      });
+      test('Resolves after second attempt to import a previously failed dependency with retry flag', function(done) {
+        var called = false;
+        var testEnvironment = initTest();
+        testEnvironment.element.group = 'lazyFail';
+        testEnvironment.element.retry = true;
+
+        var stubbedImport = sinon.stub(
+          (Polymer.Element ? Polymer : testEnvironment.element), 'importHref', (url, resolve, reject) => reject());
+
+        testEnvironment.element.addEventListener('import-loaded', function() {
+          if (called) {
+            assert.isTrue(testEnvironment.lazyFail.importLoaded);
+            done();
+          } else {
+            assert.isUndefined(testEnvironment.lazyFail.importLoaded);
+            (Polymer.Element ? Polymer : testEnvironment.element).importHref.restore();
+            called = true; // mark it so we can check for a second firing
+            testEnvironment.button.click();
+          }
+        });
+        testEnvironment.button.click();
+      });
     });
   </script>
 </body>

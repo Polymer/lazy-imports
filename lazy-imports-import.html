@@ -39,27 +39,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         fromElement = Polymer.DomModule.import(callingElement.localName);
       }
 
+      var importStatuses = {loaded: [], failed: []};
       var groupAttribute = group ? '[group=' + group + ']' : ':not([group])';
       var query =
         'link' +groupAttribute+ '[rel=\'lazy-import\'][href]:not([href=\'\'])';
       var links = fromElement.querySelectorAll(query);
 
-      return Promise.all(Array.from(links).map(function(link) {
+      if (links.length < 1) {
+        return Promise.resolve(importStatuses);
+      }
+
+      var promises = Array.from(links).map(function(link) {
         var promise;
         var href = link.getAttribute('href');
         var resolvedUrl = callingElement.resolveUrl(href);
 
         var requestImport = function() {
-          return new Promise(function(resolve) {
-            var onLoad = function() {
-              resolve({loaded: href});
-            };
-            var onFailure = function() {
-              resolve({failed: href});
-            };
-
+          return new Promise(function(resolve, reject) {
             var importHref = Polymer.importHref || callingElement.importHref;
-            importHref(resolvedUrl, onLoad, onFailure);
+            importHref(resolvedUrl, resolve, reject);
           });
         };
 
@@ -72,8 +70,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           promise = requestImport();
         }
 
-        return __importPromises[resolvedUrl] = promise;
-      })).then(function(importRequests) {
+        __importPromises[resolvedUrl] = promise;
+
+        return promise.then(
+          function onLoad() { return {loaded: href}; },
+          function onFail() { return {failed: href}; }
+        );
+      });
+
+      return Promise.all(promises).then(function(importRequests) {
         return importRequests.reduce(function(requests, nextRequest) {
           if (nextRequest.loaded) {
             requests.loaded.push(nextRequest.loaded);
@@ -82,7 +87,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             requests.failed.push(nextRequest.failed);
           }
           return requests;
-        }, {loaded: [], failed: []});
+        }, importStatuses);
       });
     };
   })();
