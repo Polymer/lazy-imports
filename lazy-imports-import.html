@@ -12,12 +12,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     var __importPromises = {};
 
     /**
-     * TODO:
+     * Calls `Polymer.Base.importHref` for each `<link rel="lazy-import"` in
+     * the `dom-module` where the calling element is defined, where the
+     * "group" attribute matches the provided "group". If no group is
+     * provided, Lazy HTML Imports with no group will be imported.
      *
-     * @param {Element} callingElement
-     * @param {String} [group]
-     * @param {Element} [fromElement]
-     * @param {Object} [options]
+     * `importHref` is only called once per globally-unique URL.
+     *
+     * @param {HTMLElement} callingElement The element that is used for
+     *                                     resolving imports and fallback
+     *                                     for the dom-module if no
+     *                                     fromElment is passed.
+     * @param {string=} group The group attribute to filter on.
+     * @param {HTMLElement=} fromElement The element to search for lazy
+     *                                   imports within. If no element is
+     *                                   provided, this behavior will find a
+     *                                   `dom-module` with an id matching
+     *                                   `this.localName`.
+     * @param {object=} options Accepts a retry flag which will force a
+     *                          retry of a previously failed import.
      * @return {Promise}
      */
     Polymer.__importLazyGroup = function(

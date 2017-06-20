@@ -36,10 +36,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          *                                   provided, this mixin will find a
          *                                   `dom-module` with an id matching
          *                                   `this.localName`.
+         * @param {object=} options Accepts a retry flag which will force a
+         *                          retry of a previously failed import.
          * @return {Promise}
          */
-        importLazyGroup(group, fromElement) {
-          return Polymer.__importLazyGroup(this, group, fromElement);
+        importLazyGroup(group, fromElement, options) {
+          return Polymer.__importLazyGroup(this, group, fromElement, options);
         }
       };
     };
