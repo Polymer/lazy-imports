@@ -16,6 +16,9 @@ To use lazy imports, write an HTML import as usual, except:
 
 Then apply the `LazyImportsMixin` mixin (or `LazyImportsBehavior`) to your element and call the `this.lazyImportGroup('group-name')` method when you want to load code for that group, e.g. when the user navigates to a new page in your app. The `lazyImportGroup` method returns a Promise that resolves once the imports have finished loading and executing.
 
+## Changes in 2.0
+* Promise polyfill is now a dev dependency
+
 ## Examples
 
 ### Polymer 2.0 – LazyImportsMixin
