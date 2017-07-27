@@ -16,6 +16,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
   <script src="../../../web-component-tester/browser.js"></script>
 
+  <link rel="import" href="../../../promise-polyfill/promise-polyfill.html">
   <link rel="import" href="upgrade-button.html">
 </head>
 <body>
@@ -33,9 +34,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var button = element.$.button;
       var lazy = element.$.lazy;
       return {element: element, button: button, lazy: lazy};
-    }
+    };
     suite('lazy-imports', function() {
-
       test('After import triggered, element upgrades', function(done) {
         var testEnvironment = initTest();
         assert.isUndefined(testEnvironment.lazy.importLoaded);
@@ -48,18 +48,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       test('Still resolves after second attempt to import', function(done) {
         var called = false;
         var testEnvironment = initTest();
-          testEnvironment.element.addEventListener('import-loaded', function() {
-            if (called) {
-              assert.isTrue(testEnvironment.lazy.importLoaded);
-              done();
-            } else {
-              called = true; //market so we can check for a second firing
-              testEnvironment.button.click();
-            }
+        testEnvironment.element.addEventListener('import-loaded', function() {
+          if (called) {
+            assert.isTrue(testEnvironment.lazy.importLoaded);
+            done();
+          } else {
+            called = true; //market so we can check for a second firing
+            testEnvironment.button.click();
+          }
         });
         testEnvironment.button.click();
       });
-
     });
   </script>
 </body>
