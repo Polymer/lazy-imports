@@ -59,7 +59,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
         testEnvironment.button.click();
       });
-
+      test('Does not throw an exception when importing number based groups', function() {
+        var testEnvironment = initTest();
+        assert.doesNotThrow(testEnvironment.element.importLazyGroup.bind(this, 404, testEnvironment.element), Error);
+      });
     });
   </script>
 </body>
