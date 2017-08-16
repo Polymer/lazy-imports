@@ -14,7 +14,7 @@ To use lazy imports, write an HTML import as usual, except:
   2) give each import a `group`  attribute; you'll use this as a key later
   3) put the lazy import inside the `<dom-module>` of your element, but outside of its `<template>`.
 
-Then apply the `LazyImportsMixin` mixin (or `LazyImportsBehavior`) to your element and call the `this.lazyImportGroup('group-name')` method when you want to load code for that group, e.g. when the user navigates to a new page in your app. The `lazyImportGroup` method returns a Promise that resolves once the imports have finished loading and executing.
+Then apply the `LazyImportsMixin` mixin (or `LazyImportsBehavior`) to your element and call the `this.importLazyGroup('group-name')` method when you want to load code for that group, e.g. when the user navigates to a new page in your app. The `importLazyGroup` method returns a Promise that resolves once the imports have finished loading and executing.
 
 ## Examples
 
