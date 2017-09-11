@@ -39,14 +39,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        * @param {HTMLElement=} fromElement The element to search for lazy
        *                                   imports within. If no element is
        *                                   provided, this behavior will find a
-       *                                   `dom-module` with an id matching
+       *                                   `dom-module` with an `id` matching
        *                                   `this.localName`.
        * @param {object=} options Accepts a retry flag which will force a
        *                          retry of a previously failed import.
        * @return {Promise}
        */
       importLazyGroup: function(group, fromElement, options) {
-        return Polymer.__importLazyGroup(this, group, fromElement, options);
+        return Polymer.__importLazyGroup(fromElement || this, group, options);
       },
     };
   })();

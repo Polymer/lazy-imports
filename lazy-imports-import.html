@@ -9,6 +9,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 <script>
   (function() {
+    'use strict';
+
     var __importPromises = {};
 
     /**
@@ -19,31 +21,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      *
      * `importHref` is only called once per globally-unique URL.
      *
-     * @param {HTMLElement} callingElement The element that is used for
-     *                                     resolving imports and fallback
-     *                                     for the dom-module if no
-     *                                     fromElment is passed.
+     * @param {HTMLElement} fromElement The element to search for lazy imports
+     *                                  within.
      * @param {string=} group The group attribute to filter on.
-     * @param {HTMLElement=} fromElement The element to search for lazy
-     *                                   imports within. If no element is
-     *                                   provided, this behavior will find a
-     *                                   `dom-module` with an id matching
-     *                                   `this.localName`.
      * @param {object=} options Accepts a retry flag which will force a
      *                          retry of a previously failed import.
      * @return {Promise}
      */
-    Polymer.__importLazyGroup = function(
-        callingElement, group, fromElement, options) {
-      if (!fromElement) {
-        fromElement = Polymer.DomModule.import(callingElement.localName);
-      }
-
+    Polymer.__importLazyGroup = function(fromElement, group, options) {
       var importStatuses = {loaded: [], failed: []};
       var groupAttribute = group ? '[group=' + group + ']' : ':not([group])';
       var query =
         'link' +groupAttribute+ '[rel=\'lazy-import\'][href]:not([href=\'\'])';
-      var links = fromElement.querySelectorAll(query);
+
+      var links =
+        Polymer.DomModule.import(fromElement.localName).querySelectorAll(query);
 
       if (links.length < 1) {
         return Promise.resolve(importStatuses);
@@ -52,7 +44,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var promises = Array.from(links).map(function(link) {
         var promise;
         var href = link.getAttribute('href');
-        var resolvedUrl = callingElement.resolveUrl(href);
+        var resolvedUrl = fromElement.resolveUrl(href);
 
         var requestImport = function() {
           return new Promise(function(resolve, reject) {
