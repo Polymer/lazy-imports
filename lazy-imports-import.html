@@ -10,41 +10,72 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <script>
   (function() {
-    var __loadedImports = {};
+    'use strict';
 
-    Polymer.__importLazyGroup = function(callingElement, group, fromElement) {
-      if (!fromElement) {
-        fromElement = Polymer.DomModule.import(callingElement.localName);
-      }
+    var __importPromises = new Map();
 
-      var groupAttribute = group ? '[group=' + group + ']' : ':not([group])';
+    /**
+     * Calls `Polymer.Base.importHref` for each `<link rel="lazy-import"` in
+     * the `dom-module` where the calling element is defined, where the
+     * "group" attribute matches the provided "group". If no group is
+     * provided, Lazy HTML Imports with no group will be imported.
+     *
+     * `importHref` is only called once per globally-unique URL.
+     *
+     * @param {HTMLElement} fromElement The element to search for lazy imports
+     *                                  within.
+     * @param {string=} group The group attribute to filter on.
+     * @param {object=} options Accepts a retry flag which will force a
+     *                          retry of a previously failed import.
+     * @return {Promise}
+     */
+    Polymer.__importLazyGroup = function(fromElement, group, options) {
+      var importStatuses = { loaded: [], failed: [] };
+      var groupAttribute = group ? '[group="' + group + '"]' : ':not([group])';
       var query =
-        'link' +groupAttribute+ '[rel=\'lazy-import\'][href]:not([href=\'\'])';
-      var imports = fromElement.querySelectorAll(query);
-      var promises = [];
+        'link' + groupAttribute + '[rel=\'lazy-import\'][href]:not([href=\'\'])';
 
-      for (var i = 0; i < imports.length; i++) {
-        promises.push(new Promise(function(resolve) {
-          var href = imports[i].getAttribute('href');
-          var onLoad = function() {
-            resolve({loaded: href});
-          };
-          var onFailure = function() {
-            resolve({failed: href});
-          };
-          var resolved = callingElement.resolveUrl(href);
+      var links =
+        Polymer.DomModule.import(fromElement.localName).querySelectorAll(query);
 
-          if (!__loadedImports[resolved]) {
-            __loadedImports[resolved] = true;
-            var importHref = Polymer.importHref || callingElement.importHref;
-            importHref(resolved, onLoad, onFailure);
-          } else {
-            resolve({loaded: href});
+        if (links.length < 1) {
+          return Promise.resolve(importStatuses);
+        }
+
+        var requestPromises = Array.from(links).map(function(link) {
+          var promise;
+          var href = link.getAttribute('href');
+          var resolvedUrl = fromElement.resolveUrl(href);
+
+          var requestImport = function() {
+            return new Promise(function(resolve, reject) {
+            var importHref = Polymer.importHref || fromElement.importHref;
+            importHref(resolvedUrl, resolve, reject);
+          });
+        };
+
+        if (__importPromises.has(resolvedUrl)) {
+          promise = __importPromises.get(resolvedUrl);
+          if (options && options.retry) {
+            promise = promise.catch(requestImport);
           }
-        }));
-      }
+        } else {
+          promise = requestImport();
+        }
 
-      return Promise.all(promises).then(function(importRequests) {
+        __importPromises.set(resolvedUrl, promise);
+
+        return promise.then(
+          function onLoad() {
+            return {loaded: href};
+          },
+          function onFail() {
+            return {failed: href};
+          }
+        );
+      });
+
+      return Promise.all(requestPromises).then(function(importRequests) {
         return importRequests.reduce(function(requests, nextRequest) {
           if (nextRequest.loaded) {
             requests.loaded.push(nextRequest.loaded);
@@ -55,7 +86,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
 
           return requests;
-        }, {loaded: [], failed: []});
+        }, importStatuses);
       });
     };
   })();

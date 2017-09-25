@@ -13,10 +13,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <dom-module id="upgrade-button">
   <link rel="lazy-import" group="lazy" href="lazy-element.html">
+  <link rel="lazy-import" group="lazyFail" href="lazy-fail-element.html">
 
   <template>
     <button id="button" on-click="buttonPressed">Upgrade Element</button>
     <lazy-element-behavior id="lazy">When upgraded, this element will have a red border</lazy-element-behavior>
+    <lazy-fail-element-behavior id="lazyFail"></lazy-fail-element-behavior>
   </template>
 
   <script>
@@ -25,8 +27,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       behaviors: [Polymer.LazyImportsBehavior],
 
-      buttonPressed: function() {
-        this.importLazyGroup('lazy').then(function(results) {
+      properties: {
+        retry: Boolean,
+
+        group: {
+          type: String,
+          value: 'lazy',
+        },
+      },
+
+      buttonPressed: function(e) {
+        this.importLazyGroup(this.group, undefined, {retry: this.retry}).then(function(results) {
           console.log(results);
           this.fire('import-loaded', results);
         }.bind(this));
