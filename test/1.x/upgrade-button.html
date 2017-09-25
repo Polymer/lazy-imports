@@ -37,10 +37,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       buttonPressed: function(e) {
-        this.importLazyGroup(this.group, undefined, {retry: this.retry}).then(function(results) {
-          console.log(results);
-          this.fire('import-loaded', results);
-        }.bind(this));
+        this.importLazyGroup(this.group, undefined, {retry: this.retry}).then(
+          function(results) {
+            console.log(results);
+            this.fire('import-loaded', results);
+          }.bind(this),
+          function(results) {
+            console.log(results);
+            this.fire('import-failed', results);
+          }.bind(this)
+        );
       },
     });
   </script>
