@@ -11,7 +11,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   (function() {
     'use strict';
 
-    var __importPromises = {};
+    var __importPromises = new Map();
 
     /**
      * Calls `Polymer.Base.importHref` for each `<link rel="lazy-import"` in
@@ -37,24 +37,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var links =
         Polymer.DomModule.import(fromElement.localName).querySelectorAll(query);
 
-      if (links.length < 1) {
-        return Promise.resolve(importStatuses);
-      }
+        if (links.length < 1) {
+          return Promise.resolve(importStatuses);
+        }
 
-      var promises = Array.from(links).map(function(link) {
-        var promise;
-        var href = link.getAttribute('href');
-        var resolvedUrl = fromElement.resolveUrl(href);
+        var requestPromises = Array.from(links).map(function(link) {
+          var promise;
+          var href = link.getAttribute('href');
+          var resolvedUrl = fromElement.resolveUrl(href);
 
-        var requestImport = function() {
-          return new Promise(function(resolve, reject) {
-            var importHref = Polymer.importHref || callingElement.importHref;
+          var requestImport = function() {
+            return new Promise(function(resolve, reject) {
+            var importHref = Polymer.importHref || fromElement.importHref;
             importHref(resolvedUrl, resolve, reject);
           });
         };
 
-        if (__importPromises.hasOwnProperty(resolvedUrl)) {
-          promise = __importPromises[resolvedUrl];
+        if (__importPromises.has(resolvedUrl)) {
+          promise = __importPromises.get(resolvedUrl);
           if (options && options.retry) {
             promise = promise.catch(requestImport);
           }
@@ -62,7 +62,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           promise = requestImport();
         }
 
-        __importPromises[resolvedUrl] = promise;
+        __importPromises.set(resolvedUrl, promise);
 
         return promise.then(
           function onLoad() {
@@ -74,7 +74,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         );
       });
 
-      return Promise.all(promises).then(function(importRequests) {
+      return Promise.all(requestPromises).then(function(importRequests) {
         return importRequests.reduce(function(requests, nextRequest) {
           if (nextRequest.loaded) {
             requests.loaded.push(nextRequest.loaded);
