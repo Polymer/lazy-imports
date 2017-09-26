@@ -11,7 +11,10 @@
     "lazy",
     "import"
   ],
-  "main": "lazy-imports.html",
+  "main": [
+    "lazy-imports-behavior.html",
+    "lazy-imports-mixin.html"
+  ],
   "private": true,
   "repository": {
     "type": "git",
