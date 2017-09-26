@@ -36,6 +36,7 @@
       },
       "devDependencies": {
         "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+        "promise-polyfill": "polymerlabs/promise-polyfill#1 - 2",
         "test-fixture": "PolymerElements/test-fixture#^1.0.0",
         "web-component-tester": "Polymer/web-component-tester#^5.0.0",
         "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"

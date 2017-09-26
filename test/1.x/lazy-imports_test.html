@@ -16,6 +16,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
   <script src="../../../web-component-tester/browser.js"></script>
 
+  <link rel="import" href="../../../promise-polyfill/promise-polyfill.html">
   <link rel="import" href="upgrade-button.html">
 </head>
 <body>
@@ -38,7 +39,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       };
     }
     suite('lazy-imports', function() {
-
       test('After import triggered, element upgrades', function(done) {
         var testEnvironment = initTest();
         assert.isUndefined(testEnvironment.lazy.importLoaded);

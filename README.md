@@ -16,6 +16,9 @@ To use lazy imports, write an HTML import as usual, except:
 
 Then apply the `LazyImportsMixin` mixin (or `LazyImportsBehavior`) to your element and call the `this.importLazyGroup('group-name')` method when you want to load code for that group, e.g. when the user navigates to a new page in your app. The `importLazyGroup` method returns a Promise that resolves once the imports have finished loading and executing.
 
+## Changes in 2.0
+A promise polyfill is not included by default but is necessary if running with webcomponents v0 polyfill (`webcomponents/webcomponentsjs#^0.7`). In webcomponents v1 polyfill (`webcomponents/webcomponentsjs#^1.0`), a promise polyfill is conditionally loaded using the `webcomponents-loader.js` or always loaded with `webcomponents-lite.js`. If you are looking for a promise polyfill, you can take a look at [promise-polyfill](https://github.com/PolymerLabs/promise-polyfill) or [es6-promise](https://github.com/stefanpenner/es6-promise)
+
 ## Examples
 
 ### Polymer 2.0 – LazyImportsMixin
