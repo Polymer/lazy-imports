@@ -7,6 +7,7 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
+
 <script>
   (function() {
     'use strict';
@@ -32,7 +33,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var importStatuses = {loaded: [], failed: []};
       var groupAttribute = group ? '[group="' + group + '"]' : ':not([group])';
       var query =
-        'link' +groupAttribute+ '[rel=\'lazy-import\'][href]:not([href=\'\'])';
+        'link' + groupAttribute + '[rel=\'lazy-import\'][href]:not([href=\'\'])';
 
       var links =
         Polymer.DomModule.import(fromElement.localName).querySelectorAll(query);
@@ -79,9 +80,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           if (nextRequest.loaded) {
             requests.loaded.push(nextRequest.loaded);
           }
+
           if (nextRequest.failed) {
             requests.failed.push(nextRequest.failed);
           }
+
           return requests;
         }, importStatuses);
       });

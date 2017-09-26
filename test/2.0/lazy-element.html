@@ -7,6 +7,9 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
+
+<link rel="import" href="../../../polymer/polymer-element.html">
+
 <dom-module id="lazy-element">
   <template>
     <style>
@@ -14,21 +17,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         border: 2px solid red;
       }
     </style>
+
     <slot></slot>
   </template>
+
   <script>
     class LazyElement extends Polymer.Element {
       static get is() { return 'lazy-element'; }
+
       static get properties() {
         return {
           importLoaded: Boolean,
         };
       }
+
       ready() {
         super.ready();
         this.importLoaded = true;
       }
     }
+
     customElements.define(LazyElement.is, LazyElement);
   </script>
 </dom-module>

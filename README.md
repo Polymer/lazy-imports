@@ -24,13 +24,13 @@ A promise polyfill is not included by default but is necessary if running with w
 ### Polymer 2.0 – LazyImportsMixin
 
 ```html
-<link rel="import" href="../../polymer/polymer.html">
+<link rel="import" href="../../polymer/polymer-element.html">
 <link rel="import" href="../lazy-imports-mixin.html">
 
 <dom-module id="upgrade-button">
   <link rel="lazy-import" group="lazy" href="lazy-element.html">
   <template>
-    <button on-tap="buttonPressed">Upgrade Element</button>
+    <button on-click="buttonPressed">Upgrade Element</button>
     <lazy-element>When upgraded, this element will have a red border</lazy-element>
   </template>
   <script>
@@ -57,7 +57,7 @@ A promise polyfill is not included by default but is necessary if running with w
 <dom-module id="upgrade-button">
   <link rel="lazy-import" group="lazy" href="lazy-element.html">
   <template>
-    <button on-tap="buttonPressed">Upgrade Element</button>
+    <button on-click="buttonPressed">Upgrade Element</button>
     <lazy-element id="lazy">When upgraded, this element will have a red border</lazy-element>
   </template>
   <script>

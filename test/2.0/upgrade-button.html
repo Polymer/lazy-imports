@@ -8,23 +8,27 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 
-<link rel="import" href="../../../polymer/polymer.html">
+<link rel="import" href="../../../polymer/polymer-element.html">
 <link rel="import" href="../../lazy-imports-mixin.html">
 
 <dom-module id="upgrade-button">
   <link rel="lazy-import" group="lazy" href="lazy-element.html">
   <link rel="lazy-import" group="lazyFail" href="lazy-fail-element.html">
+
   <template>
     <button id="button" on-click="buttonPressed">Upgrade Element</button>
     <lazy-element id="lazy">When upgraded, this element will have a red border</lazy-element>
     <lazy-fail-element id="lazyFail"></lazy-fail-element>
   </template>
+
   <script>
     class UpgradeButton extends Polymer.LazyImportsMixin(Polymer.Element) {
       static get is() { return 'upgrade-button'; }
+
       static get properties() {
         return {
           retry: Boolean,
+
           group: {
             type: String,
             value: 'lazy'
@@ -39,6 +43,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
       }
     }
+
     customElements.define(UpgradeButton.is, UpgradeButton);
   </script>
 </dom-module>
