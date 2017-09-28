@@ -34,21 +34,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var groupAttribute = group ? '[group="' + group + '"]' : ':not([group])';
       var query =
         'link' + groupAttribute + '[rel=\'lazy-import\'][href]:not([href=\'\'])';
+
       var links =
         Polymer.DomModule.import(fromElement.localName).querySelectorAll(query);
+
       if (links.length < 1) {
         return Promise.reject(importStatuses);
       }
+
       var requestPromises = Array.from(links).map(function(link) {
         var promise;
         var href = link.getAttribute('href');
         var resolvedUrl = fromElement.resolveUrl(href);
+
         var requestImport = function() {
           return new Promise(function(resolve, reject) {
             var importHref = Polymer.importHref || fromElement.importHref;
             importHref(resolvedUrl, resolve, reject);
           });
         };
+
         if (__importPromises.has(resolvedUrl)) {
           promise = __importPromises.get(resolvedUrl);
           if (options && options.retry) {
@@ -57,7 +62,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         } else {
           promise = requestImport();
         }
+
         __importPromises.set(resolvedUrl, promise);
+
         return promise.then(
           function onLoad() {
             return {loaded: href};
@@ -67,16 +74,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         );
       });
+
       return Promise.all(requestPromises).then(function(importRequests) {
         importStatuses = importRequests.reduce(function(requests, nextRequest) {
           if (nextRequest.loaded) {
             requests.loaded.push(nextRequest.loaded);
           }
+
           if (nextRequest.failed) {
             requests.failed.push(nextRequest.failed);
           }
+
           return requests;
         }, importStatuses);
+
         if (importStatuses.failed.length > 0) {
           return Promise.reject(importStatuses);
         } else {
