@@ -39,7 +39,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         Polymer.DomModule.import(fromElement.localName).querySelectorAll(query);
 
       if (links.length < 1) {
-        return Promise.reject(new Error('No imports found in the specified group.'));
+        return Promise.reject(
+          new Error('No imports found in the specified group.'));
       }
 
       var requestPromises = Array.from(links).map(function(link) {
