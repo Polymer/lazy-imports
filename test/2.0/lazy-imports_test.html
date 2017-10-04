@@ -54,6 +54,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       });
 
+      test('Rejects with Error if no imports found in group', function(done) {
+        var testEnvironment = initTest();
+        testEnvironment.element.group = 'nonexistent';
+        testEnvironment.element.addEventListener('import-failed', function(e) {
+          assert.instanceOf(e.detail, Error);
+          assert.equal(e.detail.message, 'No imports found in the specified group.');
+          done();
+        });
+        testEnvironment.button.click();
+      });
       test('After import triggered, element upgrades', function(done) {
         var testEnvironment = initTest();
         assert.isUndefined(testEnvironment.lazy.importLoaded);
@@ -90,8 +100,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var testEnvironment = initTest();
         testEnvironment.element.group = 'lazyFail';
 
-        testEnvironment.element.addEventListener('import-failed', function() {
+        testEnvironment.element.addEventListener('import-failed', function(e) {
           if (called) {
+            assert.instanceOf(e.detail, Error);
+            assert.equal(e.detail.message, 'One or more imports failed to load.');
+            assert.deepEqual(e.detail.importStatuses, {loaded: [], failed: ['lazy-fail-element.html']});
             done();
           } else {
             called = true; // Mark it so we can check for a second firing

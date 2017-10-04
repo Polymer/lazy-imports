@@ -39,7 +39,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         Polymer.DomModule.import(fromElement.localName).querySelectorAll(query);
 
       if (links.length < 1) {
-        return Promise.reject(importStatuses);
+        return Promise.reject(new Error('No imports found in the specified group.'));
       }
 
       var requestPromises = Array.from(links).map(function(link) {
@@ -89,7 +89,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }, importStatuses);
 
         if (importStatuses.failed.length > 0) {
-          return Promise.reject(importStatuses);
+          const error = new Error('One or more imports failed to load.');
+          error.importStatuses = importStatuses;
+          throw error;
         } else {
           return importStatuses;
         }

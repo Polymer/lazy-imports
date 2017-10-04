@@ -28,10 +28,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       static get properties() {
         return {
           retry: Boolean,
-
           group: {
             type: String,
-            value: 'lazy'
+            value: 'lazy',
           }
         };
       }
@@ -40,11 +39,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.importLazyGroup(this.group, undefined, {retry: this.retry}).then(
           (results) => {
             console.log(results);
-            this.dispatchEvent(new CustomEvent('import-loaded', results));
+            this.dispatchEvent(new CustomEvent('import-loaded', {
+              detail: results,
+            }));
           },
           (results) => {
             console.log(results);
-            this.dispatchEvent(new CustomEvent('import-failed', results));
+            this.dispatchEvent(new CustomEvent('import-failed', {
+              detail: results,
+            }));
           }
         );
       }
