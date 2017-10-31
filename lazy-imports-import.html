@@ -38,17 +38,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       var links =
         Polymer.DomModule.import(fromElement.localName).querySelectorAll(query);
 
-        if (links.length < 1) {
-          return Promise.resolve(importStatuses);
-        }
+      if (links.length < 1) {
+        return Promise.reject(
+          new Error('No imports found in the specified group.'));
+      }
 
-        var requestPromises = Array.from(links).map(function(link) {
-          var promise;
-          var href = link.getAttribute('href');
-          var resolvedUrl = fromElement.resolveUrl(href);
+      var requestPromises = Array.from(links).map(function(link) {
+        var promise;
+        var href = link.getAttribute('href');
+        var resolvedUrl = fromElement.resolveUrl(href);
 
-          var requestImport = function() {
-            return new Promise(function(resolve, reject) {
+        var requestImport = function() {
+          return new Promise(function(resolve, reject) {
             var importHref = Polymer.importHref || fromElement.importHref;
             importHref(resolvedUrl, resolve, reject);
           });
@@ -76,7 +77,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       });
 
       return Promise.all(requestPromises).then(function(importRequests) {
-        return importRequests.reduce(function(requests, nextRequest) {
+        importStatuses = importRequests.reduce(function(requests, nextRequest) {
           if (nextRequest.loaded) {
             requests.loaded.push(nextRequest.loaded);
           }
@@ -87,6 +88,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           return requests;
         }, importStatuses);
+
+        if (importStatuses.failed.length > 0) {
+          const error = new Error('One or more imports failed to load.');
+          error.importStatuses = importStatuses;
+          throw error;
+        } else {
+          return importStatuses;
+        }
       });
     };
   })();

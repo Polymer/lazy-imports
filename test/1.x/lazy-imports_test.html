@@ -39,6 +39,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       };
     }
     suite('lazy-imports', function() {
+      test('Rejects with Error if no imports found in group', function(done) {
+        var testEnvironment = initTest();
+        testEnvironment.element.group = 'nonexistent';
+        testEnvironment.element.addEventListener('import-failed', function(e) {
+          assert.instanceOf(e.detail, Error);
+          assert.equal(e.detail.message, 'No imports found in the specified group.');
+          done();
+        });
+        testEnvironment.button.click();
+      });
       test('After import triggered, element upgrades', function(done) {
         var testEnvironment = initTest();
         assert.isUndefined(testEnvironment.lazy.importLoaded);
@@ -51,14 +61,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       test('Still resolves after second attempt to import', function(done) {
         var called = false;
         var testEnvironment = initTest();
+        sinon.stub(
+          (Polymer.Element ? Polymer : testEnvironment.element), 'importHref', function(url, resolve) {
+            resolve();
+          });
         testEnvironment.element.addEventListener('import-loaded', function() {
           if (called) {
-            assert.isTrue(testEnvironment.lazy.importLoaded);
+            (Polymer.Element ? Polymer : testEnvironment.element).importHref.restore();
             done();
           } else {
-            called = true; // mark it so we can check for a second firing
+            called = true; // Mark it so we can check for a second firing
             testEnvironment.button.click();
           }
+        });
+        testEnvironment.element.addEventListener('import-failed', function() {
+          throw new Error('fail');
         });
         testEnvironment.button.click();
       });
@@ -67,19 +84,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var testEnvironment = initTest();
         testEnvironment.element.group = 'lazyFail';
 
-        var stubbedImport = sinon.stub(
-          (Polymer.Element ? Polymer : testEnvironment.element), 'importHref', (url, resolve, reject) => reject());
+        sinon.stub(
+          (Polymer.Element ? Polymer : testEnvironment.element), 'importHref', function(url, resolve, reject) {
+            reject();
+          });
 
-        testEnvironment.element.addEventListener('import-loaded', function() {
+        testEnvironment.element.addEventListener('import-failed', function(e) {
           if (called) {
-            assert.isUndefined(testEnvironment.lazyFail.importLoaded);
+            assert.instanceOf(e.detail, Error);
+            assert.equal(e.detail.message, 'One or more imports failed to load.');
+            assert.deepEqual(e.detail.importStatuses, {loaded: [], failed: ['lazy-fail-element.html']});
+            (Polymer.Element ? Polymer : testEnvironment.element).importHref.restore();
             done();
           } else {
-            assert.isUndefined(testEnvironment.lazyFail.importLoaded);
-              (Polymer.Element ? Polymer : testEnvironment.element).importHref.restore();
             called = true; // mark it so we can check for a second firing
             testEnvironment.button.click();
           }
+        });
+        testEnvironment.element.addEventListener('import-loaded', function() {
+          throw new Error('fail');
         });
         testEnvironment.button.click();
       });
@@ -89,21 +112,60 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         testEnvironment.element.group = 'lazyFail';
         testEnvironment.element.retry = true;
 
-        var stubbedImport = sinon.stub(
-          (Polymer.Element ? Polymer : testEnvironment.element), 'importHref', (url, resolve, reject) => reject());
+        sinon.stub(
+          (Polymer.Element ? Polymer : testEnvironment.element), 'importHref', function(url, resolve, reject) {
+            reject();
+          });
 
-        testEnvironment.element.addEventListener('import-loaded', function() {
+        testEnvironment.element.addEventListener('import-failed', function() {
           if (called) {
-            assert.isTrue(testEnvironment.lazyFail.importLoaded);
-            done();
+            throw new Error('fail');
           } else {
-            assert.isUndefined(testEnvironment.lazyFail.importLoaded);
             (Polymer.Element ? Polymer : testEnvironment.element).importHref.restore();
+            sinon.stub(
+              (Polymer.Element ? Polymer : testEnvironment.element), 'importHref', function(url, resolve) {
+                resolve();
+              });
             called = true; // mark it so we can check for a second firing
             testEnvironment.button.click();
           }
         });
+        testEnvironment.element.addEventListener('import-loaded', function() {
+          (Polymer.Element ? Polymer : testEnvironment.element).importHref.restore();
+          done();
+        });
         testEnvironment.button.click();
+      });
+      test('Resolves correctly if request is currently in-flight when another request is made', function(done) {
+        var called = false;
+        var resolve;
+        var promise = new Promise(function(res) {
+          resolve = res;
+        });
+        var testEnvironment = initTest();
+
+        sinon.stub(
+          (Polymer.Element ? Polymer : testEnvironment.element), 'importHref', function(url, res) {
+            promise.then(res);
+          });
+
+        testEnvironment.element.addEventListener('import-loaded', function() {
+          if (called) {
+            (Polymer.Element ? Polymer : testEnvironment.element).importHref.restore();
+            done();
+          }
+          called = true; // Mark call and wait for second promise event
+        });
+        testEnvironment.element.addEventListener('import-failed', function() {
+          throw new Error('fail');
+        });
+
+        testEnvironment.button.click();
+        assert.isFalse(called);
+        testEnvironment.button.click();
+        assert.isFalse(called);
+
+        resolve();
       });
       test('Does not throw an exception when importing number based groups', function() {
         var testEnvironment = initTest();
