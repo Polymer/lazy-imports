@@ -51,7 +51,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var requestImport = function() {
           return new Promise(function(resolve, reject) {
             var importHref = Polymer.importHref || fromElement.importHref;
-            importHref(resolvedUrl, resolve, reject);
+            importHref(resolvedUrl, resolve, reject, options && options.async);
           });
         };
 
