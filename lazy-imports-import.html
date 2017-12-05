@@ -30,6 +30,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @return {Promise}
      */
     Polymer.__importLazyGroup = function(fromElement, group, options) {
+      if(!options) {
+        options = {};
+      }
       var importStatuses = {loaded: [], failed: []};
       var groupAttribute = group ? '[group="' + group + '"]' : ':not([group])';
       var query =
@@ -51,13 +54,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var requestImport = function() {
           return new Promise(function(resolve, reject) {
             var importHref = Polymer.importHref || fromElement.importHref;
-            importHref(resolvedUrl, resolve, reject, options && options.async);
+            importHref(resolvedUrl, resolve, reject, options.async);
           });
         };
 
         if (__importPromises.has(resolvedUrl)) {
           promise = __importPromises.get(resolvedUrl);
-          if (options && options.retry) {
+          if (options.retry) {
             promise = promise.catch(requestImport);
           }
         } else {
