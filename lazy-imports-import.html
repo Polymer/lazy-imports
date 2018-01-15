@@ -25,11 +25,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @param {HTMLElement} fromElement The element to search for lazy imports
      *                                  within.
      * @param {string=} group The group attribute to filter on.
-     * @param {object=} options Accepts a retry flag which will force a
-     *                          retry of a previously failed import.
+     * @param {{async: boolean|undefined, retry: boolean|undefined}=} options
+     *     The async flag will use an asynchronous HTML Import.
+     *     The retry flag will force a retry of a previously failed import.
      * @return {Promise}
      */
     Polymer.__importLazyGroup = function(fromElement, group, options) {
+      options = options || {};
       var importStatuses = {loaded: [], failed: []};
       var groupAttribute = group ? '[group="' + group + '"]' : ':not([group])';
       var query =
@@ -51,13 +53,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var requestImport = function() {
           return new Promise(function(resolve, reject) {
             var importHref = Polymer.importHref || fromElement.importHref;
-            importHref(resolvedUrl, resolve, reject);
+            importHref(resolvedUrl, resolve, reject, options.async);
           });
         };
 
         if (__importPromises.has(resolvedUrl)) {
           promise = __importPromises.get(resolvedUrl);
-          if (options && options.retry) {
+          if (options.retry) {
             promise = promise.catch(requestImport);
           }
         } else {

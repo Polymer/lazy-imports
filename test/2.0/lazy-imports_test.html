@@ -73,10 +73,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
         testEnvironment.button.click();
       });
+      test('Handles async option being passed in', function(done) {
+        var testEnvironment = initTest();
+        testEnvironment.element.optAsync = true;
+        sinon.stub(Polymer, 'importHref', function(url, resolve, reject, optAsync) {
+          assert.isTrue(optAsync);
+        });
+        testEnvironment.element.addEventListener('import-loaded', function() {
+          assert.isTrue(testEnvironment.lazy.importLoaded);
+          Polymer.importHref.restore();
+          done();
+        });
+        testEnvironment.button.click();
+      });
       test('Still resolves after second attempt to import', function(done) {
         var called = false;
         var testEnvironment = initTest();
-        sinon.stub(Polymer, 'importHref', function(url, resolve) {
+        sinon.stub(Polymer, 'importHref', function(url, resolve, reject, optAsync) {
+          assert.isUndefined(optAsync);
           resolve();
         });
         testEnvironment.element.addEventListener('import-loaded', function() {
@@ -94,7 +108,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       });
       test('Still rejects after second attempt to import a previously failed dependency', function(done) {
         var called = false;
-        sinon.stub(Polymer, 'importHref', function(url, resolve, reject) {
+        sinon.stub(Polymer, 'importHref', function(url, resolve, reject, optAsync) {
+          assert.isUndefined(optAsync);
           reject();
         });
         var testEnvironment = initTest();
@@ -130,7 +145,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             throw new Error('fail');
           } else {
             Polymer.importHref.restore();
-            sinon.stub(Polymer, 'importHref', function(url, resolve) {
+            sinon.stub(Polymer, 'importHref', function(url, resolve, reject, optAsync) {
+              assert.isUndefined(optAsync);
               resolve();
             });
             called = true; // Mark it so we can check for a second firing

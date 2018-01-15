@@ -28,8 +28,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       behaviors: [Polymer.LazyImportsBehavior],
 
       properties: {
+        optAsync: Boolean,
         retry: Boolean,
-
         group: {
           type: String,
           value: 'lazy',
@@ -37,7 +37,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       buttonPressed: function(e) {
-        this.importLazyGroup(this.group, undefined, {retry: this.retry}).then(
+        this.importLazyGroup(this.group, undefined, {async: this.optAsync, retry: this.retry}).then(
           function(results) {
             console.log(results);
             this.fire('import-loaded', results);

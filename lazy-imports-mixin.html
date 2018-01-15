@@ -33,12 +33,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          *
          * @param {string=} group The group attribute to filter on.
          * @param {HTMLElement=} fromElement The element to search for lazy
-         *                                   imports within. If no element is
-         *                                   provided, this mixin will find a
-         *                                   `dom-module` with an `id` matching
-         *                                   `this.localName`.
-         * @param {object=} options Accepts a retry flag which will force a
-         *                          retry of a previously failed import.
+         *     imports within. If no element is provided, this behavior will find
+         *     a `dom-module` with an `id` matching `this.localName`.
+         * @param {{async: boolean|undefined, retry: boolean|undefined}=} options
+         *     The async flag will use an asynchronous HTML Import.
+         *     The retry flag will force a retry of a previously failed import.
          * @return {Promise}
          */
         importLazyGroup(group, fromElement, options) {
