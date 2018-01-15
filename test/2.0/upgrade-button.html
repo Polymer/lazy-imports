@@ -27,6 +27,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       static get properties() {
         return {
+          optAsync: Boolean,
           retry: Boolean,
           group: {
             type: String,
@@ -36,7 +37,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       buttonPressed() {
-        this.importLazyGroup(this.group, undefined, {retry: this.retry}).then(
+        this.importLazyGroup(this.group, undefined, {async: this.optAsync, retry: this.retry}).then(
           (results) => {
             console.log(results);
             this.dispatchEvent(new CustomEvent('import-loaded', {

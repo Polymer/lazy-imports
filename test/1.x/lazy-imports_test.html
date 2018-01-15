@@ -58,11 +58,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
         testEnvironment.button.click();
       });
+      test('Handles async option being passed in', function(done) {
+        var testEnvironment = initTest();
+        testEnvironment.element.optAsync = true;
+        sinon.stub(
+          (Polymer.Element ? Polymer : testEnvironment.element), 'importHref', function(url, resolve, reject, optAsync) {
+            assert.isTrue(optAsync);
+          });
+        testEnvironment.element.addEventListener('import-loaded', function() {
+          assert.isTrue(testEnvironment.lazy.importLoaded);
+          (Polymer.Element ? Polymer : testEnvironment.element).importHref.restore();
+          done();
+        });
+        testEnvironment.button.click();
+      });
       test('Still resolves after second attempt to import', function(done) {
         var called = false;
         var testEnvironment = initTest();
         sinon.stub(
-          (Polymer.Element ? Polymer : testEnvironment.element), 'importHref', function(url, resolve) {
+          (Polymer.Element ? Polymer : testEnvironment.element), 'importHref', function(url, resolve, reject, optAsync) {
+            assert.isUndefined(optAsync);
             resolve();
           });
         testEnvironment.element.addEventListener('import-loaded', function() {
@@ -85,7 +100,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         testEnvironment.element.group = 'lazyFail';
 
         sinon.stub(
-          (Polymer.Element ? Polymer : testEnvironment.element), 'importHref', function(url, resolve, reject) {
+          (Polymer.Element ? Polymer : testEnvironment.element), 'importHref', function(url, resolve, reject, optAsync) {
+            assert.isUndefined(optAsync);
             reject();
           });
 
@@ -113,7 +129,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         testEnvironment.element.retry = true;
 
         sinon.stub(
-          (Polymer.Element ? Polymer : testEnvironment.element), 'importHref', function(url, resolve, reject) {
+          (Polymer.Element ? Polymer : testEnvironment.element), 'importHref', function(url, resolve, reject, optAsync) {
+            assert.isUndefined(optAsync);
             reject();
           });
 
@@ -123,7 +140,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           } else {
             (Polymer.Element ? Polymer : testEnvironment.element).importHref.restore();
             sinon.stub(
-              (Polymer.Element ? Polymer : testEnvironment.element), 'importHref', function(url, resolve) {
+              (Polymer.Element ? Polymer : testEnvironment.element), 'importHref', function(url, resolve, reject, optAsync) {
+                assert.isUndefined(optAsync);
                 resolve();
               });
             called = true; // mark it so we can check for a second firing
