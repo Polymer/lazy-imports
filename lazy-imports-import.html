@@ -69,28 +69,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           new Error('No imports found in the specified group.'));
       }
 
-      const __importStatuses = {loaded: [], failed: []};
+      const importStatuses = {loaded: [], failed: []};
       const requestPromises = groupLinks.map(function(link) {
         let promise;
 
         if (link.promise) {
           promise = link.promise;
           if (options && options.retry) {
-            promise = promise.catch(requestImport.bind(this, link, fromElement, __importStatuses));
+            promise = promise.catch(requestImport.bind(this, link, fromElement, importStatuses));
           }
         } else {
-          promise = requestImport(link, fromElement, __importStatuses);
+          promise = requestImport(link, fromElement, importStatuses);
         }
 
         return promise;
       });
       return Promise.all(requestPromises).then(function() {
-        if (__importStatuses.failed.length > 0) {
+        if (importStatuses.failed.length > 0) {
           const error = new Error('One or more imports failed to load.');
-          error.importStatuses = __importStatuses;
+          error.importStatuses = importStatuses;
           throw error;
         } else {
-          return __importStatuses;
+          return importStatuses;
         }
       });
     };
