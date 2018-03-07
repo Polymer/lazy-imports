@@ -1,3 +1,4 @@
+
 <!--
 @license
 Copyright (c) 2016 The Polymer Project Authors. All rights reserved.
@@ -12,7 +13,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   (function() {
     'use strict';
 
-    var __importPromises = new Map();
+    const __lazyImports = new Map();
+
+    function requestImport(link, fromElement, importStatuses) {
+      const href = link.getAttribute('href');
+      link.promise = new Promise(function(resolve, reject) {
+        const importHref = Polymer.importHref || fromElement.importHref;
+        importHref(fromElement.resolveUrl(href), resolve, reject);
+      });
+      return link.promise.then(
+        function onLoad() {
+          return importStatuses.loaded.push({loaded: href});
+        },
+        function onFail() {
+          return importStatuses.failed.push({failed: href});
+        }
+      )
+    }
 
     /**
      * Calls `Polymer.Base.importHref` for each `<link rel="lazy-import"` in
@@ -30,71 +47,50 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @return {Promise}
      */
     Polymer.__importLazyGroup = function(fromElement, group, options) {
-      var importStatuses = {loaded: [], failed: []};
-      var groupAttribute = group ? '[group="' + group + '"]' : ':not([group])';
-      var query =
-        'link' + groupAttribute + '[rel=\'lazy-import\'][href]:not([href=\'\'])';
+      const query =
+        'link[rel=\'lazy-import\'][href]:not([href=\'\'])';
 
-      var links =
-        Polymer.DomModule.import(fromElement.localName).querySelectorAll(query);
+      if (!__lazyImports.get(fromElement)) {
+        const links =
+        Array.from(Polymer.DomModule.import(fromElement.localName).querySelectorAll(query));
+        __lazyImports.set(fromElement, links.reduce((obj, link) => {
+          const group = link.getAttribute('group');
+          if (!obj[group]) {
+            obj[group] = [];
+          }
+          obj[group].push(link);
+          return obj;
+        }, {}));
+      }
 
-      if (links.length < 1) {
+      const groupLinks = __lazyImports.get(fromElement)[group];
+      if (groupLinks.length < 1) {
         return Promise.reject(
           new Error('No imports found in the specified group.'));
       }
 
-      var requestPromises = Array.from(links).map(function(link) {
-        var promise;
-        var href = link.getAttribute('href');
-        var resolvedUrl = fromElement.resolveUrl(href);
+      const __importStatuses = {loaded: [], failed: []};
+      const requestPromises = groupLinks.map(function(link) {
+        let promise;
 
-        var requestImport = function() {
-          return new Promise(function(resolve, reject) {
-            var importHref = Polymer.importHref || fromElement.importHref;
-            importHref(resolvedUrl, resolve, reject);
-          });
-        };
-
-        if (__importPromises.has(resolvedUrl)) {
-          promise = __importPromises.get(resolvedUrl);
+        if (link.promise) {
+          promise = link.promise;
           if (options && options.retry) {
-            promise = promise.catch(requestImport);
+            promise = promise.catch(requestImport.bind(this, link, fromElement, __importStatuses));
           }
         } else {
-          promise = requestImport();
+          promise = requestImport(link, fromElement, __importStatuses);
         }
 
-        __importPromises.set(resolvedUrl, promise);
-
-        return promise.then(
-          function onLoad() {
-            return {loaded: href};
-          },
-          function onFail() {
-            return {failed: href};
-          }
-        );
+        return promise;
       });
-
-      return Promise.all(requestPromises).then(function(importRequests) {
-        importStatuses = importRequests.reduce(function(requests, nextRequest) {
-          if (nextRequest.loaded) {
-            requests.loaded.push(nextRequest.loaded);
-          }
-
-          if (nextRequest.failed) {
-            requests.failed.push(nextRequest.failed);
-          }
-
-          return requests;
-        }, importStatuses);
-
-        if (importStatuses.failed.length > 0) {
+      return Promise.all(requestPromises).then(function() {
+        if (__importStatuses.failed.length > 0) {
           const error = new Error('One or more imports failed to load.');
-          error.importStatuses = importStatuses;
+          error.importStatuses = __importStatuses;
           throw error;
         } else {
-          return importStatuses;
+          return __importStatuses;
         }
       });
     };
