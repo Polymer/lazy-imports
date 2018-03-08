@@ -81,11 +81,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           promise = link.promise;
           if (options && options.retry) {
             promise = promise.catch(function() {
-              return __requestImport(link, fromElement, importStatuses);
+              return __requestImport(link, fromElement);
             });
           }
         } else {
-          promise = __requestImport(link, fromElement, importStatuses);
+          promise = __requestImport(link, fromElement);
         }
 
         // Store request promise
