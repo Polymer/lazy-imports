@@ -29,7 +29,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       const href = link.getAttribute('href');
       link.promise = new Promise(function(resolve, reject) {
         const importHref = Polymer.importHref || fromElement.importHref;
-        importHref(fromElement.resolveUrl(href), resolve, reject, true);
+        importHref(fromElement.resolveUrl(href), resolve, reject);
       });
       return link.promise.then(
         function onLoad() {
