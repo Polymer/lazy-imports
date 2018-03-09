@@ -21,24 +21,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
      * @param {HTMLElement} link The link tag to import a document for
      * @param {HTMLElement} fromElement The element to search for lazy imports
      *                                  within.
-     * @param {object} importStatuses The object to report the status of each
-     *                                  import to.
      * @return {Promise}
      */
-    function __requestImport(link, fromElement, importStatuses) {
-      const href = link.getAttribute('href');
-      link.promise = new Promise(function(resolve, reject) {
+    function __requestImport(link, fromElement) {
+      return link.promise = new Promise(function(resolve, reject) {
         const importHref = Polymer.importHref || fromElement.importHref;
-        importHref(fromElement.resolveUrl(href), resolve, reject);
+        const resolvedUrl = fromElement.resolveUrl(link.getAttribute('href'));
+        importHref(resolvedUrl, resolve, reject);
       });
-      return link.promise.then(
-        function onLoad() {
-          return importStatuses.loaded.push({loaded: href});
-        },
-        function onFail() {
-          return importStatuses.failed.push({failed: href});
-        }
-      );
     }
 
     /**
@@ -61,8 +51,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         'link[rel=\'lazy-import\'][href]:not([href=\'\'])';
 
       if (!__lazyImports.get(fromElement)) {
-        const links =
-        Array.from(
+        const links = Array.from(
           Polymer.DomModule.import(fromElement.localName)
           .querySelectorAll(query));
 
@@ -76,8 +65,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }, {}));
       }
 
+      // Exit early if there is no associcated group
       const groupLinks = __lazyImports.get(fromElement)[group];
-      if (groupLinks.length < 1) {
+      if (!groupLinks) {
         return Promise.reject(
           new Error('No imports found in the specified group.'));
       }
@@ -86,18 +76,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       const requestPromises = groupLinks.map(function(link) {
         let promise;
 
+        // Use existing promise if available
         if (link.promise) {
           promise = link.promise;
           if (options && options.retry) {
             promise = promise.catch(function() {
-              return __requestImport(link, fromElement, importStatuses);
+              return __requestImport(link, fromElement);
             });
           }
         } else {
-          promise = __requestImport(link, fromElement, importStatuses);
+          promise = __requestImport(link, fromElement);
         }
 
-        return promise;
+        // Store request promise
+        link.promise = promise;
+
+        // Make all promises resolve for final output
+        const href = link.getAttribute('href');
+        return promise.then(
+          function onLoad() {
+            return importStatuses.loaded.push(href);
+          },
+          function onFail() {
+            return importStatuses.failed.push(href);
+          }
+        );
       });
       return Promise.all(requestPromises).then(function() {
         if (importStatuses.failed.length > 0) {
